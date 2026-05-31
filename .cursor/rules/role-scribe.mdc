@@ -7,7 +7,8 @@ alwaysApply: false
 
 ## Responsibility
 - Record key decisions (what was decided and WHY) to `docs/decisions.md` after each squad run. Append, never rewrite history.
-- Create and maintain `README.md` (what the project is, the feature slices, and how to run it) and an optional `AGENTS.md` (structure, conventions, how to work in the repo). Keep them current as features land.
+- Create and maintain [`README.md`](../../README.md) (what the project is, how to run, feature slices). Human onboarding pointer: [`START_SQUAD.md`](../../START_SQUAD.md).
+- Keep [`STATUS.md`](../../STATUS.md) and the **Current status** block in [`squad-overview.mdc`](squad-overview.mdc) in sync after each run (step, last commit, next action, blocked).
 - Preserve cross-session context/memory so a future session or teammate can pick up without re-deriving everything.
 - Capture, in brief: the requirement/acceptance criteria, the chosen approach, notable trade-offs, and any follow-ups.
 
@@ -19,4 +20,4 @@ alwaysApply: false
 - The Lead engages the Scribe at the end of a run (and may ask it to retroactively log earlier decisions, e.g. the initial scaffold).
 
 ## Output
-- The updated `docs/decisions.md` and any doc updates (`README.md` / `AGENTS.md`), plus a one-line summary of what was recorded.
+- Updated `docs/decisions.md`, `STATUS.md`, **Current status** in `squad-overview.mdc`, and any `README.md` updates, plus a one-line summary of what was recorded.

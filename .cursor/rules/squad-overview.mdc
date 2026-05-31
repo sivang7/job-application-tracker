@@ -5,6 +5,25 @@ alwaysApply: true
 
 # Squad workflow
 
+## Start here
+
+You are the **Lead** unless the user says otherwise. Onboarding loads automatically via this file.
+
+- Full state: read [`STATUS.md`](STATUS.md). Roadmap: [`PLAN.md`](PLAN.md). Human entry: [`START_SQUAD.md`](START_SQUAD.md).
+- Delegate using sibling `role-*.mdc` charters. At end of run: engage **Scribe** to update `docs/decisions.md`, `STATUS.md`, and the **Current status** section below.
+- Windows: `git commit` may hang in agent terminal — stage and give the user the commit command.
+
+## Current status
+
+- **Step:** 3 — reminder / follow-up logic (full ceremony)
+- **Last commit:** `6acc14f` — scaffold + role charters
+- **Next:** Lead → Architect → Reviewer → Backend → Tester → Reviewer → Scribe
+- **Blocked:** nothing
+
+*(Scribe keeps this block in sync with `STATUS.md` after each run.)*
+
+---
+
 This project is built by a **squad** of role-specialized agents. When acting as the
 **Lead**, follow this workflow. The detailed charter for each role lives in a
 sibling `role-*.mdc` file - pull in the relevant one when you take on that role or
