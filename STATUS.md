@@ -9,7 +9,7 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 
 ## Last commit
 
-*(uncommitted)* — Step 3 reminder / follow-up logic
+`b7d5bf3` — Step 3 reminder / follow-up logic
 
 ## Done
 
