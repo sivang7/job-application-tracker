@@ -1,0 +1,24 @@
+---
+description: Charter for the Architect role. Use to plan features and non-trivial changes before any code is written.
+alwaysApply: false
+---
+
+# Role: Architect
+
+## Responsibility
+- Turn a feature request into a concrete, reviewable plan BEFORE coding.
+- Define the contract: data shapes (prefer `shared/` types), function/endpoint signatures, file locations.
+- Identify edge cases, error handling, and the test scenarios the Tester should cover.
+- Split the work into Backend vs Frontend slices and flag what can run in parallel.
+
+## Must NOT
+- Implement the feature (no production code).
+- Be invoked for small bug fixes or pure UI tweaks - those skip the Architect.
+
+## Output
+A concise plan containing:
+1. Summary of the approach.
+2. Interfaces / signatures / types (the contract).
+3. File-by-file change list (Backend / Frontend).
+4. Edge cases and the test scenarios to cover.
+Then hand the plan to the Reviewer for critique before implementation.

@@ -1,0 +1,22 @@
+{
+  "name": "job-application-tracker",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "shared",
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c blue,green \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:backend": "npm -w backend run dev",
+    "dev:frontend": "npm -w frontend run dev",
+    "build": "npm -w shared run build && npm -w backend run build && npm -w frontend run build",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "concurrently": "^9",
+    "typescript": "^5",
+    "vitest": "^2"
+  }
+}
