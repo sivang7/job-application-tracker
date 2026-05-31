@@ -5,11 +5,11 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 
 ## Current step
 
-**Step 3** — reminder / follow-up logic (full ceremony)
+**Step 4** — applications CRUD (backend) + status pipeline / kanban view (frontend)
 
 ## Last commit
 
-`6acc14f` — Scaffold skeleton and define squad role charters
+*(uncommitted)* — Step 3 reminder / follow-up logic
 
 ## Done
 
@@ -17,12 +17,13 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 - Step 1: 7 role charters in `.cursor/rules/`
 - Step 2: thin skeleton (Backend + Frontend parallel subagents); Reviewer approved; `npm run dev` works
 - Step 2.5: project docs (`START_SQUAD.md`, `STATUS.md`, `README.md`, `docs/decisions.md`)
+- Step 3: reminder / follow-up logic — pure `getFollowUpReminders()`, `GET /applications/follow-ups`, seeded store, 20 Vitest tests; Reviewer approved
 
 ## Next
 
-Full ceremony for reminder/follow-up logic (backend-only, no UI):
+Full ceremony for applications CRUD + kanban (parallel Backend + Frontend):
 
-Lead (acceptance criteria) → Architect (plan) → Reviewer (critique plan) → Backend (implement) → Tester (tests) → Reviewer (review diff) → Lead (integrate) → Scribe (log + update docs)
+Lead → Architect → Reviewer → Backend + Frontend (parallel) → Tester → Reviewer → Lead → Scribe
 
 ## Blocked
 

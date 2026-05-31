@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import followUpsRouter from './routes/followUps.js';
 
 const app = express();
 
@@ -9,6 +10,8 @@ app.use(cors());
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
+
+app.use(followUpsRouter);
 
 const PORT = process.env.PORT ?? 3001;
 

@@ -15,9 +15,9 @@ You are the **Lead** unless the user says otherwise. Onboarding loads automatica
 
 ## Current status
 
-- **Step:** 3 — reminder / follow-up logic (full ceremony)
-- **Last commit:** `6acc14f` — scaffold + role charters
-- **Next:** Lead → Architect → Reviewer → Backend → Tester → Reviewer → Scribe
+- **Step:** 4 — applications CRUD + kanban view
+- **Last commit:** *(uncommitted)* — Step 3 reminder / follow-up logic
+- **Next:** Lead → Architect → Reviewer → Backend + Frontend (parallel) → Tester → Reviewer → Scribe
 - **Blocked:** nothing
 
 *(Scribe keeps this block in sync with `STATUS.md` after each run.)*
