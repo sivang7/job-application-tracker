@@ -9,7 +9,7 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 
 ## Last commit
 
-*(pending user commit)* — Step 4 applications CRUD, JSON persistence, kanban board
+`9cf4b0d` — Step 4 applications CRUD, JSON persistence, kanban board
 
 ## Done
 
