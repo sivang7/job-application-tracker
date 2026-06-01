@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react';
 import { checkHealth } from './api';
+import { ApplicationForm } from './components/ApplicationForm';
+import { KanbanBoard } from './components/KanbanBoard';
+import './App.css';
 
 type HealthState = 'checking' | 'ok' | 'unreachable';
 
 export function App() {
   const [health, setHealth] = useState<HealthState>('checking');
+  const [error, setError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -18,24 +23,34 @@ export function App() {
     };
   }, []);
 
-  const statusColor =
-    health === 'ok' ? '#16a34a' : health === 'unreachable' ? '#dc2626' : '#9ca3af';
+  const healthClass =
+    health === 'ok' ? 'health-ok' : health === 'unreachable' ? 'health-bad' : 'health-checking';
 
   return (
-    <main style={{ fontFamily: 'system-ui, sans-serif', maxWidth: 640, margin: '4rem auto', padding: '0 1rem' }}>
-      <h1 style={{ marginBottom: '0.25rem' }}>Job Application Tracker</h1>
-      <p style={{ color: '#6b7280', marginTop: 0 }}>Squad sandbox - skeleton</p>
-
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '1.5rem' }}>
-        <span style={{ fontWeight: 600 }}>Backend status:</span>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', color: statusColor }}>
-          <span
-            aria-hidden
-            style={{ width: 10, height: 10, borderRadius: '50%', background: statusColor, display: 'inline-block' }}
-          />
-          {health === 'checking' ? 'checking...' : health}
+    <main className="app">
+      <header className="app-header">
+        <div>
+          <h1>Job Application Tracker</h1>
+          <p className="app-subtitle">Kanban board — drag cards between columns to update status</p>
+        </div>
+        <span className={`health-badge ${healthClass}`}>
+          <span className="health-dot" aria-hidden />
+          Backend {health === 'checking' ? '…' : health}
         </span>
-      </div>
+      </header>
+
+      {error ? (
+        <div className="error-banner" role="alert">
+          {error}
+        </div>
+      ) : null}
+
+      <ApplicationForm
+        onCreated={() => setRefreshKey((k) => k + 1)}
+        onError={setError}
+      />
+
+      <KanbanBoard refreshKey={refreshKey} onError={setError} />
     </main>
   );
 }

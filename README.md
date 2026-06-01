@@ -13,20 +13,31 @@ npm install
 npm run dev
 ```
 
+(`dev:backend` builds `shared/` first, then starts the API.)
+
 - Backend: http://localhost:3001
   - `GET /health` → `{ "status": "ok" }`
+  - `GET /applications` → `Application[]`
+  - `GET /applications/:id` → `Application` or 404
+  - `POST /applications` → create (body: `company`, `role`, optional `status`, dates, `notes`, `contacts`)
+  - `PATCH /applications/:id` → partial update
+  - `DELETE /applications/:id` → 204 or 404
   - `GET /applications/follow-ups` → `{ "reminders": [...], "asOf": "YYYY-MM-DD" }` (optional `?asOf=YYYY-MM-DD`)
-- Frontend: http://localhost:5173 (Vite dev server; proxies `/api` → backend)
+- Frontend: http://localhost:5173 — kanban board with drag-and-drop status changes (proxies `/api` → backend)
 
-Other scripts: `npm run build`, `npm test` (Vitest; 20 tests in `backend/src/reminders.test.ts`).
+**Persistence:** applications are stored in `backend/data/applications.json` (gitignored). Data survives backend restarts. On first run, five demo applications are seeded. To reset to demo data, stop the backend and delete that file.
+
+Override the data path with `APPLICATIONS_DATA_FILE` (used by tests).
+
+Other scripts: `npm run build`, `npm test` (Vitest; 41 tests under `backend/src/*.test.ts`).
 
 ## Repo layout
 
 | Path | Purpose |
 |------|---------|
-| `shared/` | Shared TypeScript types (`Application`, `FollowUpReminder`, etc.) |
-| `backend/` | Node + Express API (in-memory store; CRUD and features added by squad) |
-| `frontend/` | React + Vite UI shell |
+| `shared/` | Shared TypeScript types (`Application`, CRUD inputs, etc.) |
+| `backend/` | Node + Express API + JSON file persistence |
+| `frontend/` | React + Vite kanban UI (`@dnd-kit/core`) |
 | `docs/decisions.md` | Append-only squad decision log (Scribe) |
 | `PLAN.md` | Full learning roadmap and squad design |
 | `STATUS.md` | Current step and what's next |
@@ -34,9 +45,9 @@ Other scripts: `npm run build`, `npm test` (Vitest; 20 tests in `backend/src/rem
 ## Feature slices (backlog)
 
 1. ~~**Reminder / follow-up logic** (backend)~~ — done (Step 3)
-2. **Applications CRUD** (backend) — Step 4
-3. **Status pipeline / kanban view** (frontend) — Step 4
-4. **Stats dashboard** (frontend)
+2. ~~**Applications CRUD** (backend)~~ — done (Step 4)
+3. ~~**Status pipeline / kanban view** (frontend)~~ — done (Step 4)
+4. **Stats dashboard** (frontend) — Step 5
 
 ## Squad
 

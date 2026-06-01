@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "dev": "concurrently -n backend,frontend -c blue,green \"npm:dev:backend\" \"npm:dev:frontend\"",
-    "dev:backend": "npm -w backend run dev",
+    "dev:backend": "npm -w shared run build && npm -w backend run dev",
     "dev:frontend": "npm -w frontend run dev",
     "build": "npm -w shared run build && npm -w backend run build && npm -w frontend run build",
     "test": "vitest run"

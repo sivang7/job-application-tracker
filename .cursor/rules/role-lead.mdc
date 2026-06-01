@@ -26,5 +26,10 @@ alwaysApply: false
 - Small fix / UI tweak: straight to the relevant Coder -> Tester (if logic) -> Reviewer.
 - Dispatch independent Backend and Frontend work in parallel.
 
+## Hard gates (do not skip)
+- User approval of a plan is **not** a substitute for Reviewer Gate 1 or Gate 2.
+- Do **not** tell the user to commit until Reviewer Gate 2 is **`APPROVED`** in chat (see `squad-overview.mdc`).
+- When delegating, spawn a **Reviewer** subagent (or run an explicit Reviewer pass) with `role-reviewer.mdc` and the plan or `git diff` — do not self-approve as Lead.
+
 ## Output
-- A short summary of what was routed where, the final integrated outcome, and any follow-ups.
+- A short summary of what was routed where, the final integrated outcome, Reviewer gate results (`APPROVED` / `CHANGES REQUESTED`), and any follow-ups.

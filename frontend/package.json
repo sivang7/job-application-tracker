@@ -9,15 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@jat/shared": "*",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "@jat/shared": "*"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "vite": "^5.4.0",
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.0",
     "typescript": "^5.5.0",
-    "@types/react": "^18.3.0",
-    "@types/react-dom": "^18.3.0"
+    "vite": "^5.4.0"
   }
 }

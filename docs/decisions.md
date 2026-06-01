@@ -50,3 +50,23 @@ Append-only record of squad and user decisions. The Scribe maintains this file.
 **Implementation:** `backend/src/reminders.ts` (pure logic + `DEFAULT_FOLLOW_UP_CONFIG`), `GET /applications/follow-ups` with optional `?asOf=`, seeded store for demo. Shared types: `FollowUpReminder`, `FollowUpConfig`, `FollowUpRemindersResponse`. Config constant lives in backend (not shared) to avoid tsx workspace value-export issues.
 
 **Outcome:** 20 Vitest tests; Reviewer approved plan and diff.
+
+---
+
+## 2026-06-01 — Step 4 applications CRUD + kanban + JSON persistence
+
+**Decision:** Full applications REST CRUD, JSON file persistence (option A), and kanban UI with `@dnd-kit/core`.
+
+**Persistence:**
+- Default file: `backend/data/applications.json` (gitignored); atomic write via temp + rename
+- First run seeds five demo apps; restart keeps user data
+- Override path with `APPLICATIONS_DATA_FILE` (Vitest uses isolated temp file via `vitest.setup.ts`)
+- Corrupt/invalid file → fail fast on startup
+
+**API:** `GET/POST /applications`, `GET/PATCH/DELETE /applications/:id`; validation in pure `applicationsValidation.ts`; `{ error: string }` on 400/404.
+
+**Frontend:** Five status columns (`APPLICATION_STATUS_ORDER`); drag card to column → `PATCH { status }`; create form + delete with confirm; `App.css` for layout.
+
+**Why JSON not SQLite:** Single-user local sandbox; matches `Application[]` model with minimal deps; SQLite deferred until multi-user or heavy querying needed.
+
+**Outcome:** 41 Vitest tests; `npm run build` passes.

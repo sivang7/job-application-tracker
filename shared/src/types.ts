@@ -1,5 +1,35 @@
 export type ApplicationStatus = 'wishlist' | 'applied' | 'interviewing' | 'offer' | 'rejected';
 
+export const APPLICATION_STATUS_ORDER: ApplicationStatus[] = [
+  'wishlist',
+  'applied',
+  'interviewing',
+  'offer',
+  'rejected',
+];
+
+const APPLICATION_STATUS_SET = new Set<string>(APPLICATION_STATUS_ORDER);
+
+export function isApplicationStatus(value: string): value is ApplicationStatus {
+  return APPLICATION_STATUS_SET.has(value);
+}
+
+export interface CreateApplicationInput {
+  company: string;
+  role: string;
+  status?: ApplicationStatus;
+  appliedDate?: string;
+  lastContactDate?: string;
+  notes?: string;
+  contacts?: Contact[];
+}
+
+export type UpdateApplicationInput = Partial<CreateApplicationInput>;
+
+export interface ApiErrorBody {
+  error: string;
+}
+
 export interface Contact {
   name: string;
   email?: string;

@@ -15,9 +15,9 @@ You are the **Lead** unless the user says otherwise. Onboarding loads automatica
 
 ## Current status
 
-- **Step:** 4 — applications CRUD + kanban view
-- **Last commit:** `b7d5bf3` — Step 3 reminder / follow-up logic
-- **Next:** Lead → Architect → Reviewer → Backend + Frontend (parallel) → Tester → Reviewer → Scribe
+- **Step:** 5 — stats dashboard (frontend)
+- **Last commit:** *(pending)* — Step 4 CRUD + JSON persistence + kanban
+- **Next:** Architect (if needed) → Frontend → Tester → Reviewer → Scribe
 - **Blocked:** nothing
 
 *(Scribe keeps this block in sync with `STATUS.md` after each run.)*
@@ -56,6 +56,15 @@ This applies to EVERY role:
 4. When Backend and Frontend work is independent, dispatch them **in parallel**.
 5. If the Reviewer raises issues, loop back to the relevant Coder.
 6. At the end of a run, engage the **Scribe** to record key decisions and update the docs.
+
+## Hard gates (non-optional)
+
+These apply even when the user says **execute**, **go**, or **ship it** after approving a plan:
+
+1. **Reviewer Gate 1** — Before any Coder writes feature code, a Reviewer pass on the plan must end with **`APPROVED`** or **`CHANGES REQUESTED`** in the chat. (Skip only for small fixes that skip the Architect.)
+2. **Reviewer Gate 2** — Before the Lead tells the user to commit or marks the step done, a Reviewer pass on the **actual diff** must end with **`APPROVED`** or **`CHANGES REQUESTED`**. No commit-ready summary without Gate 2 `APPROVED`.
+3. **Lead does not implement** — The Lead delegates; Coders, Tester, and Reviewer do the work (via subagents or explicit role passes). Fixing a one-line script is a Coder/Lead handoff to Backend, not a silent shortcut.
+4. **Say it explicitly** — End Reviewer passes with a visible heading, e.g. `## Reviewer Gate 2: APPROVED`, so the user and Scribe can see the gate was run.
 
 ## Delegation in Cursor
 "Running the squad" = the Lead agent delegating to **subagents** (one per role) and
