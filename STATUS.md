@@ -13,7 +13,7 @@ Planning (slice not started).
 
 ## Last commit
 
-`4fd6e2b` — charter tightening + review lessons (uncommitted)
+`4bbfd90` — charter tightening + review lessons
 
 ## Done
 
@@ -25,7 +25,7 @@ Planning (slice not started).
 - Step 4: applications CRUD + JSON file persistence + kanban UI (`@dnd-kit/core`); 41 Vitest tests; `npm run build` passes
 - Step 5: stats dashboard — `react-router-dom` routes, `recharts` charts, client-side `stats.ts`, per-route error boundaries; 49 Vitest tests; Reviewer Gate 2 APPROVED
 - Review & lessons: user feedback captured in `docs/decisions.md`
-- Charter tightening: senior persona, Lead checklist, parallel protocol, good vs lazy examples (uncommitted)
+- Charter tightening: senior persona, Lead checklist, parallel protocol, good vs lazy examples
 
 ## Blocked
 
