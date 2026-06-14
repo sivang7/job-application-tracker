@@ -70,3 +70,22 @@ Append-only record of squad and user decisions. The Scribe maintains this file.
 **Why JSON not SQLite:** Single-user local sandbox; matches `Application[]` model with minimal deps; SQLite deferred until multi-user or heavy querying needed.
 
 **Outcome:** 41 Vitest tests; `npm run build` passes.
+
+---
+
+## 2026-06-14 — Step 5 stats dashboard (frontend)
+
+**Decision:** Frontend-only stats dashboard with client-side aggregation from existing APIs. No new backend endpoint.
+
+**Approach:**
+- Routes via `react-router-dom`: `/board` (kanban + create form), `/stats` (dashboard); `/` and unknown paths redirect to `/board`
+- Metrics computed in pure `frontend/src/stats.ts` from `GET /applications`; follow-up counts from existing `GET /applications/follow-ups` via new `fetchFollowUps()` client wrapper in `api.ts` (reminder rules stay on backend)
+- Charts via `recharts` (bar charts); key numbers in stat cards first, charts supplementary
+- Per-route `RouteErrorBoundary` so a render crash on one view does not unmount the app shell
+- Stats fetch: `Promise.allSettled` + unmount cancellation; refetch on `/stats` mount and when `refreshKey` changes; partial failure shows app stats even if follow-ups fails
+
+**Deferred (acceptable at 2 views / small dataset):** React Query/SWR, global context, lazy route code-splitting, shared fetch cache between Board and Stats.
+
+**Why client-side stats:** Single-user JSON store; all applications already loaded for kanban pattern; matches PLAN Step 5 as frontend-focused slice.
+
+**Outcome:** 49 Vitest tests (8 new in `frontend/src/stats.test.ts`); Reviewer Gate 2 APPROVED; `npm run build` passes.

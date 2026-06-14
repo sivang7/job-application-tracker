@@ -2,6 +2,7 @@ import type {
   Application,
   ApiErrorBody,
   CreateApplicationInput,
+  FollowUpRemindersResponse,
   UpdateApplicationInput,
 } from '@jat/shared';
 
@@ -45,6 +46,11 @@ export async function checkHealth(): Promise<boolean> {
 export async function fetchApplications(): Promise<Application[]> {
   const res = await fetch(`${BASE_URL}/applications`);
   return handleJson<Application[]>(res);
+}
+
+export async function fetchFollowUps(): Promise<FollowUpRemindersResponse> {
+  const res = await fetch(`${BASE_URL}/applications/follow-ups`);
+  return handleJson<FollowUpRemindersResponse>(res);
 }
 
 export async function createApplication(

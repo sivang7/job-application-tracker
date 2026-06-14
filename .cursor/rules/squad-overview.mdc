@@ -15,9 +15,9 @@ You are the **Lead** unless the user says otherwise. Onboarding loads automatica
 
 ## Current status
 
-- **Step:** 5 — stats dashboard (frontend)
+- **Step:** Review & lessons (all feature slices done)
 - **Last commit:** `9cf4b0d` — Step 4 CRUD + JSON persistence + kanban
-- **Next:** Architect (if needed) → Frontend → Tester → Reviewer → Scribe
+- **Next:** Review & lessons
 - **Blocked:** nothing
 
 *(Scribe keeps this block in sync with `STATUS.md` after each run.)*

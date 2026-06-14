@@ -5,7 +5,7 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 
 ## Current step
 
-**Step 5** — stats dashboard (frontend)
+**Review & lessons** — all feature slices complete; next squad run is reflection, not new product code.
 
 ## Last commit
 
@@ -19,10 +19,11 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 - Step 2.5: project docs (`START_SQUAD.md`, `STATUS.md`, `README.md`, `docs/decisions.md`)
 - Step 3: reminder / follow-up logic — pure `getFollowUpReminders()`, `GET /applications/follow-ups`, seeded store, 20 Vitest tests; Reviewer approved
 - Step 4: applications CRUD + JSON file persistence + kanban UI (`@dnd-kit/core`); 41 Vitest tests; `npm run build` passes
+- Step 5: stats dashboard — `react-router-dom` routes, `recharts` charts, client-side `stats.ts`, per-route error boundaries; 49 Vitest tests; Reviewer Gate 2 APPROVED
 
 ## Next
 
-Stats dashboard (frontend-focused slice; Architect optional if non-trivial).
+Review & lessons — read diffs, capture hand-off quality and role scope notes.
 
 ## Blocked
 
