@@ -16,7 +16,7 @@ You are the **Lead** unless the user says otherwise. Onboarding loads automatica
 ## Current status
 
 - **Step:** Review & lessons (all feature slices done)
-- **Last commit:** `9cf4b0d` — Step 4 CRUD + JSON persistence + kanban
+- **Last commit:** `63226ab` — Step 5 stats dashboard
 - **Next:** Review & lessons
 - **Blocked:** nothing
 
