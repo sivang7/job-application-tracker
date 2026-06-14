@@ -3,13 +3,17 @@
 Single source of truth for where the squad left off. The Scribe keeps this in sync
 with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 
-## Current step
+## Feature
 
-**Review & lessons** — all feature slices complete; next squad run is reflection, not new product code.
+Follow-ups on board — reminder badges on kanban cards + "Mark contacted" action.
+
+## Phase
+
+Planning (slice not started).
 
 ## Last commit
 
-`63226ab` — Step 5 stats dashboard, routing, charts, client-side aggregation
+`4fd6e2b` — charter tightening + review lessons (uncommitted)
 
 ## Done
 
@@ -20,10 +24,8 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 - Step 3: reminder / follow-up logic — pure `getFollowUpReminders()`, `GET /applications/follow-ups`, seeded store, 20 Vitest tests; Reviewer approved
 - Step 4: applications CRUD + JSON file persistence + kanban UI (`@dnd-kit/core`); 41 Vitest tests; `npm run build` passes
 - Step 5: stats dashboard — `react-router-dom` routes, `recharts` charts, client-side `stats.ts`, per-route error boundaries; 49 Vitest tests; Reviewer Gate 2 APPROVED
-
-## Next
-
-Review & lessons — read diffs, capture hand-off quality and role scope notes.
+- Review & lessons: user feedback captured in `docs/decisions.md`
+- Charter tightening: senior persona, Lead checklist, parallel protocol, good vs lazy examples (uncommitted)
 
 ## Blocked
 

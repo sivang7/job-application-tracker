@@ -89,3 +89,47 @@ Append-only record of squad and user decisions. The Scribe maintains this file.
 **Why client-side stats:** Single-user JSON store; all applications already loaded for kanban pattern; matches PLAN Step 5 as frontend-focused slice.
 
 **Outcome:** 49 Vitest tests (8 new in `frontend/src/stats.test.ts`); Reviewer Gate 2 APPROVED; `npm run build` passes.
+
+---
+
+## 2026-06-14 — Review & lessons (PLAN Step 5)
+
+**Source:** User reflection (subjective process feedback — not inferable from git alone).
+
+**What worked:**
+- Lead stayed out of implementation.
+
+**Gaps observed:**
+- Reviewer Gate 1 was not always run until the user explicitly asked (rules existed; Lead enforcement was the gap).
+- Best-practice lens was not used proactively by Architect/Coders until the user prompted; role charters were updated together afterward.
+- Backend + Frontend ran in parallel only once, on unrelated slices — not a true same-feature coordination test.
+
+**Overall:** Squad still felt generic; user wants roles to behave like strong senior engineers by default.
+
+**Follow-ups chosen:**
+1. Tighten role charters (persona, Lead checklist, parallel protocol, good vs lazy examples) — see next entry.
+2. Feature A: follow-ups on board — first slice with Backend + Frontend on a frozen contract in parallel.
+
+---
+
+## 2026-06-14 — Charter tightening (post-review)
+
+**Decision:** Strengthen role charters so senior behavior and parallel coordination are defaults, not user-prompted.
+
+**Changes (`.cursor/rules/`):**
+- **Persona** line on Architect, Backend, Frontend, Reviewer, Tester, Lead.
+- **Lead pre-dispatch checklist** — Gate 1 before Coders, Gate 2 before commit; user "go" does not skip gates.
+- **Parallel coordination protocol** — contract in `shared/` first, Gate 1, then Backend + Frontend in parallel with same contract excerpt; stop on ambiguity.
+- **Good vs lazy examples** in Architect, Backend, Frontend charters.
+- **Reviewer mandatory headings** — `## Reviewer Gate N: APPROVED` / `CHANGES REQUESTED`.
+- **Tester** — challenge thin coverage, not only happy path.
+- **squad-overview** — parallel protocol + note that Review & lessons requires human input.
+
+**Why:** Address enforcement and senior-behavior gaps without adding new gates; prepare for Feature A parallel slice.
+
+**Outcome:** Docs-only change; no commit in this run (user request). Next step: Feature A (follow-ups on board).
+
+**Corrections (same day):**
+- **Tester persona** — distinct test-engineer identity (writes tests); not a copy of Coders' senior-engineer persona.
+- **Reviewer two hats** — Gate 1 plan critique + Gate 2 code review before commit (not a separate "QA engineer" role).
+- **Current status format** — `Feature` + `Phase` in `squad-overview.mdc` and `STATUS.md`; removed workflow echo from status (ceremony stays in squad definitions).

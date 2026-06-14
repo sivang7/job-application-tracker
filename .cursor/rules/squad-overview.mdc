@@ -15,12 +15,12 @@ You are the **Lead** unless the user says otherwise. Onboarding loads automatica
 
 ## Current status
 
-- **Step:** Review & lessons (all feature slices done)
-- **Last commit:** `63226ab` — Step 5 stats dashboard
-- **Next:** Review & lessons
+- **Feature:** Follow-ups on board — reminder badges on kanban cards + "Mark contacted" action
+- **Phase:** Planning (slice not started)
+- **Last commit:** `4fd6e2b` — charter tightening + review lessons (uncommitted)
 - **Blocked:** nothing
 
-*(Scribe keeps this block in sync with `STATUS.md` after each run.)*
+*(Scribe keeps this block in sync with `STATUS.md` after each run. Use product language here — workflow lives in Routing rules and role charters below.)*
 
 ---
 
@@ -53,9 +53,21 @@ This applies to EVERY role:
    - **Small bug fix or UI tweak** -> skip the Architect, go straight to the relevant Coder.
 3. For features, hand off in this order:
    `Architect (plan) -> Reviewer (critique plan) -> Backend and/or Frontend (implement) -> Tester (tests) -> Reviewer (review diff) -> Lead (integrate)`.
-4. When Backend and Frontend work is independent, dispatch them **in parallel**.
+4. When Backend and Frontend share a slice, use the **parallel coordination protocol** (contract first, Gate 1, then parallel with the same contract in each prompt). When work is truly independent, parallel dispatch is still fine.
 5. If the Reviewer raises issues, loop back to the relevant Coder.
 6. At the end of a run, engage the **Scribe** to record key decisions and update the docs.
+
+### Parallel coordination (same slice)
+
+1. Architect publishes frozen contract (`shared/` types, API, UX, errors).
+2. Reviewer Gate 1 on full plan.
+3. Dispatch Backend + Frontend in parallel with the same contract excerpt.
+4. Contract ambiguity → role stops and reports to Lead (no silent workaround).
+5. Mismatches after integration → back to Architect.
+
+### Review & lessons (PLAN Step 5)
+
+Subjective feedback (hand-off quality, whether gates felt useful, role creep) requires **human input** — the Lead cannot infer this from git alone. Ask the user for bullet notes; Scribe records them in `docs/decisions.md`.
 
 ## Hard gates (non-optional)
 
