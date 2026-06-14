@@ -5,11 +5,11 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 
 ## Feature
 
-Follow-ups on board — reminder badges on kanban cards + "Mark contacted" action.
+None — learning track complete.
 
 ## Phase
 
-Planning (slice not started).
+Complete (Step 5).
 
 ## Last commit
 

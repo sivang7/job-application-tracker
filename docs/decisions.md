@@ -108,7 +108,6 @@ Append-only record of squad and user decisions. The Scribe maintains this file.
 
 **Follow-ups chosen:**
 1. Tighten role charters (persona, Lead checklist, parallel protocol, good vs lazy examples) — see next entry.
-2. Feature A: follow-ups on board — first slice with Backend + Frontend on a frozen contract in parallel.
 
 ---
 
@@ -125,9 +124,9 @@ Append-only record of squad and user decisions. The Scribe maintains this file.
 - **Tester** — challenge thin coverage, not only happy path.
 - **squad-overview** — parallel protocol + note that Review & lessons requires human input.
 
-**Why:** Address enforcement and senior-behavior gaps without adding new gates; prepare for Feature A parallel slice.
+**Why:** Address enforcement and senior-behavior gaps without adding new gates.
 
-**Outcome:** Docs-only change; no commit in this run (user request). Next step: Feature A (follow-ups on board).
+**Outcome:** Docs-only change; no commit in this run (user request).
 
 **Corrections (same day):**
 - **Tester persona** — distinct test-engineer identity (writes tests); not a copy of Coders' senior-engineer persona.

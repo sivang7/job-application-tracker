@@ -42,7 +42,9 @@ Other scripts: `npm run build`, `npm test` (Vitest; 49 tests — backend + `fron
 | `PLAN.md` | Full learning roadmap and squad design |
 | `STATUS.md` | Current step and what's next |
 
-## Feature slices (backlog)
+## Feature slices
+
+All planned slices are complete:
 
 1. ~~**Reminder / follow-up logic** (backend)~~ — done (Step 3)
 2. ~~**Applications CRUD** (backend)~~ — done (Step 4)

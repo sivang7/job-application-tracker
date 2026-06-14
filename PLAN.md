@@ -40,7 +40,6 @@ flowchart TD
 - **Rules** (`.cursor/rules/*.mdc`) - each role's charter, committed so the team persists.
 - **Subagent delegation** - the Lead spawns role-specialized helper subagents.
 - **Multitask Mode / parallel agents** - Backend + Frontend run concurrently.
-- **Custom Modes** - optional, for the manual contrast exercise.
 
 ## The project: Job Application Tracker
 - `frontend/` React + TS (Vite); `backend/` Node + TS API (in-memory first); `shared/` types.
@@ -57,12 +56,6 @@ flowchart TD
 3. **Second squad run (full ceremony)** - reminder/follow-up logic: Lead -> Architect plans -> Reviewer critiques -> Backend implements -> Tester tests -> Reviewer reviews.
 4. **Remaining slices** - applications CRUD + kanban (parallel Backend+Frontend), then stats dashboard.
 5. **Review & lessons** - read diffs; capture hand-off quality and role scope notes.
-6. **Optional contrast** - recreate one slice manually via Custom Modes.
-7. **Graduate** - apply the same workflow to one low-risk task in a real project.
-
-## Phase 2 (optional, later)
-Try the `@bradygaster/squad-cli` library (runs on GitHub Copilot) and compare the
-turnkey "persistent named team" experience to this native build.
 
 ## Notes
 - "Squad runs" in native Cursor = the Lead agent delegating to subagents, guided by the rule charters.
