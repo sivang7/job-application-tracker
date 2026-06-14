@@ -13,7 +13,7 @@ Planning (slice not started).
 
 ## Last commit
 
-`c313502` — sync status to charter tightening commit
+`4bbfd90` — charter tightening + review lessons
 
 ## Done
 

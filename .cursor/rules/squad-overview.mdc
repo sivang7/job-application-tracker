@@ -17,7 +17,7 @@ You are the **Lead** unless the user says otherwise. Onboarding loads automatica
 
 - **Feature:** Follow-ups on board — reminder badges on kanban cards + "Mark contacted" action
 - **Phase:** Planning (slice not started)
-- **Last commit:** `c313502` — sync status to charter tightening commit
+- **Last commit:** `4bbfd90` — charter tightening + review lessons
 - **Blocked:** nothing
 
 *(Scribe keeps this block in sync with `STATUS.md` after each run. Use product language here — workflow lives in Routing rules and role charters below.)*
