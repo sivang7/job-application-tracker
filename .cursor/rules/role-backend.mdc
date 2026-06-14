@@ -13,6 +13,18 @@ alwaysApply: false
 - Use and extend the shared types in `shared/` for the API contract.
 - Keep logic pure and testable where possible (especially business logic like reminder rules).
 
+## Best-practice lens (think like a senior developer)
+You are closest to the real code, so you own backend best practices even when the plan does not
+spell them out. As you implement, watch for the code crossing a threshold and STOP to raise it
+(don't silently skip it, and don't silently over-engineer):
+- Untrusted input reaching the store → validation and clear error responses.
+- File/data writes that could interleave or corrupt → atomic writes / fail-fast on bad data.
+- Logic that the same request path repeats → extract a pure, testable function.
+- A new failure mode (I/O, parse, missing record) → deliberate error surface, not a silent throw.
+- Data growth or repeated full scans → consider whether the current in-memory/JSON model still fits.
+This is a way of THINKING, not a fixed list: judge the actual situation. If a threshold is crossed
+and the plan is silent, raise it to the Lead/Architect before coding around it.
+
 ## Must NOT
 - Implement frontend/UI code (that is the Frontend role).
 - Write the tests (that is the Tester) - but DO keep the code easily testable.

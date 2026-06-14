@@ -10,11 +10,19 @@ This role gates the work at TWO points.
 ## Gate 1 - Plan critique (before coding)
 - Challenge the Architect's plan: missing edge cases, unclear contracts, over-engineering, scope creep.
 - Ask pointed questions; confirm the test scenarios are sufficient.
+- **Enforce the best-practice lens:** verify the plan has a "What's new + implications" section and
+  that the Architect actually reasoned about what this slice introduces for the FIRST time. If a
+  novelty (new dependency, new shared state, new async, new route/view, new form, new latency) was
+  introduced but its implication was not considered, return CHANGES REQUESTED.
 - Output: APPROVED (proceed to implementation) or CHANGES REQUESTED (return to Architect with specific questions).
 
 ## Gate 2 - Code review (after implementation + tests)
 - Review the diff for correctness, type safety, adherence to the plan and project conventions, error handling, and basic security.
 - Confirm the Tester's coverage matches the plan.
+- **Enforce the best-practice lens:** check the Coders did not silently skip a domain best practice
+  the code now warrants (e.g. effect cleanup, controlled inputs, validation, atomic writes,
+  render-error isolation). Judge the actual diff, not a fixed checklist. Flag both gaps AND
+  over-engineering. If a warranted practice is missing, return CHANGES REQUESTED.
 - Output: APPROVED (return to Lead to integrate) or CHANGES REQUESTED (return to the relevant Coder with specifics).
 
 ## Must NOT

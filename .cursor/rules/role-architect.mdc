@@ -11,6 +11,26 @@ alwaysApply: false
 - Identify edge cases, error handling, and the test scenarios the Tester should cover.
 - Split the work into Backend vs Frontend slices and flag what can run in parallel.
 
+## Best-practice lens (think like a senior designer)
+You are the FIRST line of defense for best practices. Do not work from a fixed checklist of
+named solutions (it will always be out of date). Instead, read the ACTUAL current code plus
+the delta this slice introduces, and answer these generative questions in the plan:
+
+- **What does this slice introduce that the codebase has never had before?** (new dependency,
+  new shared state, new async work, new user-perceived latency, new long list, new form,
+  new route/view, new background timer or subscription.)
+- **Does the platform/framework already have a standard pattern for what this code now does?**
+  (e.g. effect cleanup/cancellation, controlled vs uncontrolled inputs, Suspense/lazy loading.)
+- **Who else will need this data?** (signals state lifting / context / a state-management approach.)
+- **What is the cost to load or render this?** (signals lazy loading, memoization, pagination.)
+- **If we shipped 3 more slices like this, what would rot?** (signals a refactor to do now.)
+
+Output a short **"What's new + implications"** subsection: each novelty → the risk/threshold it
+crosses → your planned response (or an explicit "N/A — same as a previous step"). Map to
+CATEGORIES (lifecycle, data flow, performance, dependency risk, accessibility), not just the one
+solution you happen to remember. The goal is to surface practices we have NOT used before, not to
+re-list ones we already agreed on.
+
 ## Must NOT
 - Implement the feature (no production code).
 - Be invoked for small bug fixes or pure UI tweaks - those skip the Architect.
@@ -21,4 +41,5 @@ A concise plan containing:
 2. Interfaces / signatures / types (the contract).
 3. File-by-file change list (Backend / Frontend).
 4. Edge cases and the test scenarios to cover.
+5. "What's new + implications" (the best-practice lens above).
 Then hand the plan to the Reviewer for critique before implementation.

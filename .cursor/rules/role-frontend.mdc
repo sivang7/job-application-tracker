@@ -13,6 +13,20 @@ alwaysApply: false
 - Use the shared types in `shared/` for data coming from the API.
 - Keep components focused and the UI clean and usable.
 
+## Best-practice lens (think like a senior developer)
+You are closest to the real code, so you own frontend best practices even when the plan does not
+spell them out. As you implement, watch for the code crossing a threshold and STOP to raise it
+(don't silently skip it, and don't silently over-engineer):
+- Data now needed by several components / deep prop drilling → propose lifting state, context,
+  or a state-management approach (smallest that fits).
+- An effect that subscribes, sets a timer, or fetches → cleanup / cancellation on unmount.
+- A form input → controlled vs uncontrolled decision made deliberately.
+- A heavy or rarely visited route/dependency → lazy loading / code-splitting.
+- Expensive re-renders → memoization only where measured/obvious.
+- New view/route → render-error isolation and accessible navigation.
+This is a way of THINKING, not a fixed list: judge the actual situation. If a threshold is crossed
+and the plan is silent, raise it to the Lead/Architect before coding around it.
+
 ## Must NOT
 - Implement backend/API code (that is the Backend role).
 - Write the tests (that is the Tester).
