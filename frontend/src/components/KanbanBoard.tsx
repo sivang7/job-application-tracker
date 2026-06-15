@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -9,14 +9,16 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
-import type { Application, ApplicationStatus } from '@jat/shared';
+import type { Application, ApplicationStatus, FollowUpReminder } from '@jat/shared';
 import { APPLICATION_STATUS_ORDER, isApplicationStatus } from '@jat/shared';
 import {
   ApiError,
   deleteApplication,
   fetchApplications,
+  fetchFollowUps,
   updateApplication,
 } from '../api';
+import { ApplicationDetailModal } from './ApplicationDetailModal';
 import { KanbanColumn } from './KanbanColumn';
 import { ApplicationCard } from './ApplicationCard';
 
@@ -45,10 +47,19 @@ function resolveDropStatus(
   return overApp?.status ?? null;
 }
 
+function remindersToMap(reminders: FollowUpReminder[]): Map<string, FollowUpReminder> {
+  return new Map(reminders.map((r) => [r.applicationId, r]));
+}
+
 export function KanbanBoard({ refreshKey, onError }: KanbanBoardProps) {
   const [applications, setApplications] = useState<Application[]>([]);
+  const [remindersByAppId, setRemindersByAppId] = useState<Map<string, FollowUpReminder>>(
+    new Map(),
+  );
   const [loading, setLoading] = useState(true);
   const [activeApp, setActiveApp] = useState<Application | null>(null);
+  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+  const [detailOpen, setDetailOpen] = useState(false);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -60,8 +71,9 @@ export function KanbanBoard({ refreshKey, onError }: KanbanBoardProps) {
     setLoading(true);
     onError('');
     try {
-      const apps = await fetchApplications();
+      const [apps, followUps] = await Promise.all([fetchApplications(), fetchFollowUps()]);
       setApplications(apps);
+      setRemindersByAppId(remindersToMap(followUps.reminders));
     } catch (err) {
       onError(err instanceof ApiError ? err.message : 'Failed to load applications');
     } finally {
@@ -72,6 +84,11 @@ export function KanbanBoard({ refreshKey, onError }: KanbanBoardProps) {
   useEffect(() => {
     void load();
   }, [load, refreshKey]);
+
+  const selectedApplication = useMemo(() => {
+    if (!selectedApp) return null;
+    return applications.find((a) => a.id === selectedApp.id) ?? selectedApp;
+  }, [applications, selectedApp]);
 
   function handleDragStart(event: DragStartEvent) {
     const app = applications.find((a) => a.id === event.active.id);
@@ -111,9 +128,27 @@ export function KanbanBoard({ refreshKey, onError }: KanbanBoardProps) {
     try {
       await deleteApplication(id);
       setApplications((apps) => apps.filter((a) => a.id !== id));
+      if (selectedApp?.id === id) {
+        setDetailOpen(false);
+        setSelectedApp(null);
+      }
     } catch (err) {
       onError(err instanceof ApiError ? err.message : 'Failed to delete application');
     }
+  }
+
+  function handleOpen(application: Application) {
+    setSelectedApp(application);
+    setDetailOpen(true);
+  }
+
+  const handleCloseDetail = useCallback(() => {
+    setDetailOpen(false);
+  }, []);
+
+  function handleSaved(updated: Application) {
+    setApplications((apps) => apps.map((a) => (a.id === updated.id ? updated : a)));
+    void load();
   }
 
   if (loading) {
@@ -123,27 +158,44 @@ export function KanbanBoard({ refreshKey, onError }: KanbanBoardProps) {
   const grouped = groupByStatus(applications);
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCorners}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-    >
-      <div className="kanban-board">
-        {APPLICATION_STATUS_ORDER.map((status) => (
-          <KanbanColumn
-            key={status}
-            status={status}
-            applications={grouped[status]}
-            onDelete={handleDelete}
-          />
-        ))}
-      </div>
-      <DragOverlay>
-        {activeApp ? (
-          <ApplicationCard application={activeApp} onDelete={() => {}} />
-        ) : null}
-      </DragOverlay>
-    </DndContext>
+    <>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="kanban-board">
+          {APPLICATION_STATUS_ORDER.map((status) => (
+            <KanbanColumn
+              key={status}
+              status={status}
+              applications={grouped[status]}
+              remindersByAppId={remindersByAppId}
+              onDelete={handleDelete}
+              onOpen={handleOpen}
+            />
+          ))}
+        </div>
+        <DragOverlay>
+          {activeApp ? (
+            <ApplicationCard
+              application={activeApp}
+              reminder={remindersByAppId.get(activeApp.id)}
+              onDelete={() => {}}
+              onOpen={() => {}}
+            />
+          ) : null}
+        </DragOverlay>
+      </DndContext>
+
+      <ApplicationDetailModal
+        application={selectedApplication}
+        isOpen={detailOpen}
+        onClose={handleCloseDetail}
+        onSaved={handleSaved}
+        onError={onError}
+      />
+    </>
   );
 }

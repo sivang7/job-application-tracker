@@ -1,14 +1,22 @@
 import { useDroppable } from '@dnd-kit/core';
-import type { Application, ApplicationStatus } from '@jat/shared';
+import type { Application, ApplicationStatus, FollowUpReminder } from '@jat/shared';
 import { ApplicationCard } from './ApplicationCard';
 
 interface KanbanColumnProps {
   status: ApplicationStatus;
   applications: Application[];
+  remindersByAppId: Map<string, FollowUpReminder>;
   onDelete: (id: string) => void;
+  onOpen: (application: Application) => void;
 }
 
-export function KanbanColumn({ status, applications, onDelete }: KanbanColumnProps) {
+export function KanbanColumn({
+  status,
+  applications,
+  remindersByAppId,
+  onDelete,
+  onOpen,
+}: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({
     id: status,
     data: { status },
@@ -26,7 +34,13 @@ export function KanbanColumn({ status, applications, onDelete }: KanbanColumnPro
       </header>
       <div className="kanban-column-body">
         {applications.map((app) => (
-          <ApplicationCard key={app.id} application={app} onDelete={onDelete} />
+          <ApplicationCard
+            key={app.id}
+            application={app}
+            reminder={remindersByAppId.get(app.id)}
+            onDelete={onDelete}
+            onOpen={onOpen}
+          />
         ))}
       </div>
     </section>

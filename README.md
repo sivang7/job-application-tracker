@@ -19,17 +19,17 @@ npm run dev
   - `GET /health` → `{ "status": "ok" }`
   - `GET /applications` → `Application[]`
   - `GET /applications/:id` → `Application` or 404
-  - `POST /applications` → create (body: `company`, `role`, optional `status`, dates, `notes`, `contacts`)
+  - `POST /applications` → create (body: `company`, `role`, optional `status`, dates, `link`, `description`, `notes`, `contacts` with optional `phone`)
   - `PATCH /applications/:id` → partial update
   - `DELETE /applications/:id` → 204 or 404
   - `GET /applications/follow-ups` → `{ "reminders": [...], "asOf": "YYYY-MM-DD" }` (optional `?asOf=YYYY-MM-DD`)
-- Frontend: http://localhost:5173 — board (`/board`) + stats dashboard (`/stats`) with drag-and-drop status changes (proxies `/api` → backend)
+- Frontend: http://localhost:5173 — board (`/board`) + stats dashboard (`/stats`); kanban with drag handle, click card to edit, date + overdue badges, **+ Add application** modal
 
 **Persistence:** applications are stored in `backend/data/applications.json` (gitignored). Data survives backend restarts. On first run, five demo applications are seeded. To reset to demo data, stop the backend and delete that file.
 
 Override the data path with `APPLICATIONS_DATA_FILE` (used by tests).
 
-Other scripts: `npm run build`, `npm test` (Vitest; 49 tests — backend + `frontend/src/stats.test.ts`).
+Other scripts: `npm run build`, `npm test` (Vitest; 69 tests — backend + frontend).
 
 ## Repo layout
 
@@ -44,7 +44,11 @@ Other scripts: `npm run build`, `npm test` (Vitest; 49 tests — backend + `fron
 
 ## Feature slices
 
-All planned slices are complete:
+Planned learning-track slices are complete. Post-track enhancement:
+
+5. ~~**Application details** (modals + extended fields + card badges)~~ — done (2026-06-14)
+
+Earlier slices:
 
 1. ~~**Reminder / follow-up logic** (backend)~~ — done (Step 3)
 2. ~~**Applications CRUD** (backend)~~ — done (Step 4)

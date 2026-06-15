@@ -1,18 +1,35 @@
 import { describe, expect, it } from 'vitest';
 import type { Application } from '@jat/shared';
 import {
+  DEFAULT_FOLLOW_UP_CONFIG,
   daysBetween,
   getFollowUpReminders,
   parseIsoDate,
 } from './reminders.js';
 import { getApplications } from './store.js';
 
+const ANCHOR_DATE = '2026-05-01';
+
+const appliedThreshold = DEFAULT_FOLLOW_UP_CONFIG.thresholds.applied!;
+const interviewingThreshold = DEFAULT_FOLLOW_UP_CONFIG.thresholds.interviewing!;
+
+function addUtcDays(iso: string, days: number): string {
+  const date = parseIsoDate(iso);
+  if (!date) throw new Error(`Invalid date: ${iso}`);
+  const next = new Date(date.getTime());
+  next.setUTCDate(next.getUTCDate() + days);
+  const year = next.getUTCFullYear();
+  const month = String(next.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(next.getUTCDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 const appliedApp = (overrides: Partial<Application> = {}): Application => ({
   id: 'app-1',
   company: 'Test Co',
   role: 'Engineer',
   status: 'applied',
-  appliedDate: '2026-05-01',
+  appliedDate: ANCHOR_DATE,
   ...overrides,
 });
 
@@ -35,13 +52,13 @@ describe('parseIsoDate', () => {
 
 describe('daysBetween', () => {
   it('counts whole UTC days between dates', () => {
-    const anchor = parseIsoDate('2026-05-01')!;
-    const asOf = parseIsoDate('2026-05-08')!;
+    const anchor = parseIsoDate(ANCHOR_DATE)!;
+    const asOf = parseIsoDate(addUtcDays(ANCHOR_DATE, 7))!;
     expect(daysBetween(anchor, asOf)).toBe(7);
   });
 
   it('returns zero for same day', () => {
-    const d = parseIsoDate('2026-05-01')!;
+    const d = parseIsoDate(ANCHOR_DATE)!;
     expect(daysBetween(d, d)).toBe(0);
   });
 });
@@ -55,38 +72,52 @@ describe('getFollowUpReminders', () => {
     expect(getFollowUpReminders([appliedApp()], 'bad-date')).toEqual([]);
   });
 
-  it('reminds for applied status past 7-day threshold', () => {
+  it('reminds for applied status one day past threshold', () => {
     const reminders = getFollowUpReminders(
-      [appliedApp({ appliedDate: '2026-05-01' })],
-      '2026-05-09',
+      [appliedApp({ appliedDate: ANCHOR_DATE })],
+      addUtcDays(ANCHOR_DATE, appliedThreshold + 1),
     );
     expect(reminders).toHaveLength(1);
     expect(reminders[0].daysOverdue).toBe(1);
     expect(reminders[0].applicationId).toBe('app-1');
-    expect(reminders[0].anchorDate).toBe('2026-05-01');
+    expect(reminders[0].anchorDate).toBe(ANCHOR_DATE);
   });
 
   it('does not remind on exact threshold day (exclusive boundary)', () => {
     const reminders = getFollowUpReminders(
-      [appliedApp({ appliedDate: '2026-05-01' })],
-      '2026-05-08',
+      [appliedApp({ appliedDate: ANCHOR_DATE })],
+      addUtcDays(ANCHOR_DATE, appliedThreshold),
     );
     expect(reminders).toHaveLength(0);
   });
 
-  it('reminds for interviewing with 3-day threshold', () => {
+  it('reminds for interviewing one day past threshold', () => {
     const reminders = getFollowUpReminders(
       [
         appliedApp({
           status: 'interviewing',
-          appliedDate: '2026-05-01',
-          lastContactDate: '2026-05-01',
+          appliedDate: ANCHOR_DATE,
+          lastContactDate: ANCHOR_DATE,
         }),
       ],
-      '2026-05-05',
+      addUtcDays(ANCHOR_DATE, interviewingThreshold + 1),
     );
     expect(reminders).toHaveLength(1);
     expect(reminders[0].daysOverdue).toBe(1);
+  });
+
+  it('does not remind for interviewing on exact threshold day', () => {
+    const reminders = getFollowUpReminders(
+      [
+        appliedApp({
+          status: 'interviewing',
+          appliedDate: ANCHOR_DATE,
+          lastContactDate: ANCHOR_DATE,
+        }),
+      ],
+      addUtcDays(ANCHOR_DATE, interviewingThreshold),
+    );
+    expect(reminders).toHaveLength(0);
   });
 
   it('prefers lastContactDate over appliedDate as anchor', () => {
@@ -149,20 +180,20 @@ describe('getFollowUpReminders', () => {
 
   it('assigns urgency tiers by days overdue', () => {
     const low = getFollowUpReminders(
-      [appliedApp({ appliedDate: '2026-05-01' })],
-      '2026-05-09',
+      [appliedApp({ appliedDate: ANCHOR_DATE })],
+      addUtcDays(ANCHOR_DATE, appliedThreshold + 1),
     );
     expect(low[0].urgency).toBe('low');
 
     const medium = getFollowUpReminders(
-      [appliedApp({ appliedDate: '2026-05-01' })],
-      '2026-05-12',
+      [appliedApp({ appliedDate: ANCHOR_DATE })],
+      addUtcDays(ANCHOR_DATE, appliedThreshold + 4),
     );
     expect(medium[0].urgency).toBe('medium');
 
     const high = getFollowUpReminders(
-      [appliedApp({ appliedDate: '2026-05-01' })],
-      '2026-05-16',
+      [appliedApp({ appliedDate: ANCHOR_DATE })],
+      addUtcDays(ANCHOR_DATE, appliedThreshold + 8),
     );
     expect(high[0].urgency).toBe('high');
   });
@@ -170,7 +201,7 @@ describe('getFollowUpReminders', () => {
   it('sorts reminders by daysOverdue descending', () => {
     const reminders = getFollowUpReminders(
       [
-        appliedApp({ id: 'a', appliedDate: '2026-05-01' }),
+        appliedApp({ id: 'a', appliedDate: ANCHOR_DATE }),
         appliedApp({ id: 'b', appliedDate: '2026-01-01' }),
       ],
       '2026-05-31',
@@ -181,12 +212,12 @@ describe('getFollowUpReminders', () => {
   it('handles mixed statuses in one batch', () => {
     const reminders = getFollowUpReminders(
       [
-        appliedApp({ id: 'due', appliedDate: '2026-05-01' }),
+        appliedApp({ id: 'due', appliedDate: ANCHOR_DATE }),
         appliedApp({ id: 'skip', status: 'wishlist', appliedDate: '2026-01-01' }),
         appliedApp({
           id: 'recent',
           status: 'interviewing',
-          appliedDate: '2026-05-01',
+          appliedDate: ANCHOR_DATE,
           lastContactDate: '2026-05-29',
         }),
       ],
@@ -196,10 +227,11 @@ describe('getFollowUpReminders', () => {
   });
 
   it('respects custom config thresholds', () => {
+    const customThreshold = 3;
     const reminders = getFollowUpReminders(
-      [appliedApp({ appliedDate: '2026-05-01' })],
-      '2026-05-05',
-      { thresholds: { applied: 3 } },
+      [appliedApp({ appliedDate: ANCHOR_DATE })],
+      addUtcDays(ANCHOR_DATE, customThreshold + 1),
+      { thresholds: { applied: customThreshold } },
     );
     expect(reminders).toHaveLength(1);
     expect(reminders[0].daysOverdue).toBe(1);
@@ -208,7 +240,9 @@ describe('getFollowUpReminders', () => {
 
 describe('seed data scenarios', () => {
   it('returns expected reminders for fixed asOf against store seed dates', () => {
-    const reminders = getFollowUpReminders([...getApplications()], '2026-05-31');
+    // seed-3 last contact 2026-05-27 needs asOf past 4-day interviewing threshold
+    const asOf = '2026-06-01';
+    const reminders = getFollowUpReminders([...getApplications()], asOf);
 
     const ids = reminders.map((r) => r.applicationId);
     expect(ids).toContain('seed-1');

@@ -9,7 +9,7 @@ import type {
 export const DEFAULT_FOLLOW_UP_CONFIG: FollowUpConfig = {
   thresholds: {
     applied: 7,
-    interviewing: 3,
+    interviewing: 4,
   },
 };
 

@@ -15,8 +15,8 @@ You are the **Lead** unless the user says otherwise. Onboarding loads automatica
 
 ## Current status
 
-- **Feature:** None — learning track complete
-- **Phase:** Complete (Step 5)
+- **Feature:** Form polish — validation, focus fix, trash icon (done; pending commit)
+- **Phase:** Complete — awaiting user commit
 - **Last commit:** `4bbfd90` — charter tightening + review lessons
 - **Blocked:** nothing
 

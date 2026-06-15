@@ -117,6 +117,128 @@
   margin: 0 0 0.8rem;
 }
 
+.board-toolbar {
+  margin-bottom: 1rem;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.modal-dialog {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgb(0 0 0 / 0.15);
+  max-width: 640px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  outline: none;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1rem 0.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0.25rem 0.5rem;
+}
+
+.modal-body {
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.application-form-fields .form-field textarea {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font: inherit;
+  resize: vertical;
+}
+
+.form-field--wide {
+  flex: 2;
+  min-width: 200px;
+}
+
+.form-link-preview {
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+}
+
+.form-link-preview a {
+  color: #2563eb;
+}
+
+.contacts-editor {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.75rem;
+  margin: 0;
+}
+
+.contacts-editor legend {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0 0.25rem;
+}
+
+.contacts-empty {
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin: 0 0 0.5rem;
+}
+
+.contacts-list {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.contact-row {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 0.5rem;
+}
+
+.btn-sm {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.45rem;
+}
+
 .application-form {
   background: #f9fafb;
   border: 1px solid #e5e7eb;
@@ -231,32 +353,151 @@
 }
 
 .application-card {
+  position: relative;
   background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 6px;
-  padding: 0.6rem 0.65rem;
-  cursor: grab;
+  padding: 0.5rem 1.6rem 0.45rem 0.55rem;
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
-}
-
-.application-card:active {
-  cursor: grabbing;
 }
 
 .application-card--dragging {
   opacity: 0.4;
 }
 
+.application-card-layout {
+  display: flex;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
+
+.application-card-drag-handle {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: grab;
+  font-size: 0.9rem;
+  line-height: 1;
+  padding: 0.15rem 0.1rem 0;
+  flex-shrink: 0;
+}
+
+.application-card-drag-handle:active {
+  cursor: grabbing;
+}
+
+.application-card-body {
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.application-card-body:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
 .application-card-company {
   font-weight: 600;
   font-size: 0.875rem;
   margin-bottom: 0.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.application-card-link-icon {
+  color: #2563eb;
+  font-size: 0.75rem;
+  text-decoration: none;
 }
 
 .application-card-role {
   font-size: 0.8rem;
   color: #6b7280;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.application-card-contact {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-bottom: 0.35rem;
+}
+
+.application-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-bottom: 0.35rem;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.15rem 0.4rem;
+  border-radius: 999px;
+  line-height: 1.2;
+}
+
+.badge-date {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.badge-urgency--low {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge-urgency--medium {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.badge-urgency--high {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.application-card-delete {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.35rem;
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 0.15rem;
+  line-height: 0;
+  border-radius: 4px;
+}
+
+.application-card-delete:hover {
+  color: #dc2626;
+  background: #fef2f2;
+}
+
+.form-summary-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #b91c1c;
+  font-size: 0.85rem;
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.65rem;
+}
+
+.field-error {
+  color: #b91c1c;
+  font-size: 0.72rem;
+  margin-top: 0.15rem;
+}
+
+.form-field input[aria-invalid='true'],
+.form-field textarea[aria-invalid='true'] {
+  border-color: #f87171;
 }
 
 .application-card-actions {

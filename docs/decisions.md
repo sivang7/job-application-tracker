@@ -41,7 +41,7 @@ Append-only record of squad and user decisions. The Scribe maintains this file.
 **Decision:** Status-based follow-up thresholds with pure, testable logic and a read-only API endpoint. No CRUD or UI in this slice.
 
 **Rules:**
-- `applied` → remind after **7** days; `interviewing` → **3** days
+- `applied` → remind after **7** days; `interviewing` → **4** days
 - `wishlist`, `rejected`, `offer` → never remind
 - Anchor date: `lastContactDate` if set, else `appliedDate`; skip if neither exists or date is invalid
 - Boundary: exclusive — exactly on threshold day is **not** due (`daysSinceAnchor > threshold`)
@@ -132,3 +132,41 @@ Append-only record of squad and user decisions. The Scribe maintains this file.
 - **Tester persona** — distinct test-engineer identity (writes tests); not a copy of Coders' senior-engineer persona.
 - **Reviewer two hats** — Gate 1 plan critique + Gate 2 code review before commit (not a separate "QA engineer" role).
 - **Current status format** — `Feature` + `Phase` in `squad-overview.mdc` and `STATUS.md`; removed workflow echo from status (ceremony stays in squad definitions).
+
+---
+
+## 2026-06-14 — Application details (modals + fields + card badges)
+
+**Decision:** Extend applications with `link` and `description`; expose existing `notes`, dates, and `contacts` in UI; add optional `Contact.phone`.
+
+**UX:**
+- **+ Add application** opens create modal (replaces inline form)
+- Click card body opens edit modal; drag handle (`⠿`) preserves kanban DnD
+- Card badges: relative **date** pill + **urgency** pill when app appears in follow-ups API
+- Contacts editor: repeatable rows (name, email, phone, title)
+
+**Backend:** `link` validated as http/https URL (max 2000); `description` max 5000; `phone` on contacts max 200. No reminder logic changes.
+
+**Frontend:** Reusable `Modal`, shared `ApplicationFormFields`, `ContactsEditor`, `cardDateLabel.ts` for badge text. Board loads applications + follow-ups in parallel.
+
+**Outcome:** 58 Vitest tests; Reviewer Gate 2 APPROVED; `npm run build` passes.
+
+---
+
+## 2026-06-14 — Form polish (validation, focus fix, trash icon, threshold)
+
+**Decision:** Fix modal focus-loss bug; add client-side form validation on submit; trash icon delete; interviewing threshold 3 → 4 days.
+
+**Focus fix:** `Modal` effect depended on unstable `onClose` — re-ran `dialogRef.focus()` every keystroke in create modal. Fixed: `onClose` ref + effect deps `[isOpen]` only.
+
+**Validation:** `frontend/src/validateApplicationForm.ts` mirrors backend rules; inline field errors on submit; contact email/phone format when set. Backend aligned for contact email/phone format.
+
+**UX:** Delete → top-right trash icon with `title="Delete application"`.
+
+**Threshold:** `DEFAULT_FOLLOW_UP_CONFIG.interviewing` = 4. `reminders.test.ts` derives test dates from config via `addUtcDays(anchor, threshold + n)` — no hardcoded magic dates.
+
+**Lessons (user feedback):**
+- Frontend should have added validation without being asked — Lead acceptance criteria for forms must require client-side validation.
+- Tester should use manual modal smoke checklist (type full sentence in each field) until interaction tests exist.
+
+**Outcome:** 69 Vitest tests; `npm run build` passes.

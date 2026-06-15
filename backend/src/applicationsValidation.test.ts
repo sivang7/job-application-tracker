@@ -54,6 +54,62 @@ describe('validateCreateInput', () => {
     });
     expect(result.ok).toBe(false);
   });
+
+  it('accepts contact with phone', () => {
+    const result = validateCreateInput({
+      company: 'Acme',
+      role: 'Eng',
+      contacts: [{ name: 'Pat', phone: '+1 555-0100' }],
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.contacts).toEqual([{ name: 'Pat', phone: '+1 555-0100' }]);
+    }
+  });
+
+  it('rejects invalid contact email', () => {
+    const result = validateCreateInput({
+      company: 'Acme',
+      role: 'Eng',
+      contacts: [{ name: 'Pat', email: 'not-an-email' }],
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toContain('email');
+  });
+
+  it('rejects invalid contact phone', () => {
+    const result = validateCreateInput({
+      company: 'Acme',
+      role: 'Eng',
+      contacts: [{ name: 'Pat', phone: 'letters' }],
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toContain('phone');
+  });
+
+  it('rejects invalid link', () => {
+    const result = validateCreateInput({
+      company: 'Acme',
+      role: 'Eng',
+      link: 'not-a-url',
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toContain('link');
+  });
+
+  it('accepts https link and description', () => {
+    const result = validateCreateInput({
+      company: 'Acme',
+      role: 'Eng',
+      link: 'https://jobs.example.com/123',
+      description: 'Great role',
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.link).toBe('https://jobs.example.com/123');
+      expect(result.data.description).toBe('Great role');
+    }
+  });
 });
 
 describe('validateUpdateInput', () => {
@@ -72,5 +128,14 @@ describe('validateUpdateInput', () => {
     const result = validateUpdateInput({ appliedDate: null });
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.data.appliedDate).toBeUndefined();
+  });
+
+  it('allows clearing link and description with null', () => {
+    const result = validateUpdateInput({ link: null, description: null });
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data.link).toBeUndefined();
+      expect(result.data.description).toBeUndefined();
+    }
   });
 });

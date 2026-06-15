@@ -21,6 +21,8 @@ export function createApplication(input: CreateApplicationInput): Application {
     status: input.status ?? 'wishlist',
     ...(input.appliedDate !== undefined && { appliedDate: input.appliedDate }),
     ...(input.lastContactDate !== undefined && { lastContactDate: input.lastContactDate }),
+    ...(input.link !== undefined && { link: input.link }),
+    ...(input.description !== undefined && { description: input.description }),
     ...(input.notes !== undefined && { notes: input.notes }),
     ...(input.contacts !== undefined && { contacts: input.contacts }),
   };

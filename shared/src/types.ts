@@ -20,11 +20,23 @@ export interface CreateApplicationInput {
   status?: ApplicationStatus;
   appliedDate?: string;
   lastContactDate?: string;
+  link?: string;
+  description?: string;
   notes?: string;
   contacts?: Contact[];
 }
 
-export type UpdateApplicationInput = Partial<CreateApplicationInput>;
+export type UpdateApplicationInput = {
+  company?: string;
+  role?: string;
+  status?: ApplicationStatus;
+  appliedDate?: string | null;
+  lastContactDate?: string | null;
+  link?: string | null;
+  description?: string | null;
+  notes?: string | null;
+  contacts?: Contact[] | null;
+};
 
 export interface ApiErrorBody {
   error: string;
@@ -33,6 +45,7 @@ export interface ApiErrorBody {
 export interface Contact {
   name: string;
   email?: string;
+  phone?: string;
   role?: string;
 }
 
@@ -43,6 +56,8 @@ export interface Application {
   status: ApplicationStatus;
   appliedDate?: string; // ISO date
   lastContactDate?: string; // ISO date
+  link?: string;
+  description?: string;
   notes?: string;
   contacts?: Contact[];
 }

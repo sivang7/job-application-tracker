@@ -5,11 +5,11 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 
 ## Feature
 
-None — learning track complete.
+Form polish — validation, focus fix, trash icon, interviewing threshold (implemented; pending commit).
 
 ## Phase
 
-Complete (Step 5).
+Complete — awaiting user commit.
 
 ## Last commit
 
@@ -26,6 +26,8 @@ Complete (Step 5).
 - Step 5: stats dashboard — `react-router-dom` routes, `recharts` charts, client-side `stats.ts`, per-route error boundaries; 49 Vitest tests; Reviewer Gate 2 APPROVED
 - Review & lessons: user feedback captured in `docs/decisions.md`
 - Charter tightening: senior persona, Lead checklist, parallel protocol, good vs lazy examples
+- **Application details slice:** modals, extended fields, card badges
+- **Form polish slice:** client-side validation, modal focus fix, trash delete icon, interviewing threshold 4; 69 Vitest tests; Reviewer Gate 2 APPROVED
 
 ## Blocked
 

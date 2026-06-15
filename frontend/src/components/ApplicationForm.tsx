@@ -1,7 +1,14 @@
-import { useState, type FormEvent } from 'react';
-import type { ApplicationStatus } from '@jat/shared';
-import { APPLICATION_STATUS_ORDER } from '@jat/shared';
-import { createApplication, ApiError } from '../api';
+import { useCallback, useState, type FormEvent } from 'react';
+import { ApiError, createApplication } from '../api';
+import type { ApplicationFormErrors } from '../validateApplicationForm';
+import { validateApplicationForm } from '../validateApplicationForm';
+import {
+  ApplicationFormFields,
+  emptyFormValues,
+  formValuesToPayload,
+  type ApplicationFormValues,
+} from './ApplicationFormFields';
+import { Modal } from './Modal';
 
 interface ApplicationFormProps {
   onCreated: () => void;
@@ -9,20 +16,33 @@ interface ApplicationFormProps {
 }
 
 export function ApplicationForm({ onCreated, onError }: ApplicationFormProps) {
-  const [company, setCompany] = useState('');
-  const [role, setRole] = useState('');
-  const [status, setStatus] = useState<ApplicationStatus>('wishlist');
+  const [isOpen, setIsOpen] = useState(false);
+  const [values, setValues] = useState<ApplicationFormValues>(emptyFormValues());
+  const [fieldErrors, setFieldErrors] = useState<ApplicationFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
+
+  const handleClose = useCallback(() => {
+    if (submitting) return;
+    setIsOpen(false);
+    setValues(emptyFormValues());
+    setFieldErrors({});
+  }, [submitting]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
+    const validation = validateApplicationForm(values);
+    if (!validation.ok) {
+      setFieldErrors(validation.errors);
+      return;
+    }
+
+    setFieldErrors({});
     setSubmitting(true);
     onError('');
     try {
-      await createApplication({ company, role, status });
-      setCompany('');
-      setRole('');
-      setStatus('wishlist');
+      await createApplication(formValuesToPayload(values));
+      setValues(emptyFormValues());
+      setIsOpen(false);
       onCreated();
     } catch (err) {
       onError(err instanceof ApiError ? err.message : 'Failed to create application');
@@ -32,42 +52,42 @@ export function ApplicationForm({ onCreated, onError }: ApplicationFormProps) {
   }
 
   return (
-    <form className="application-form" onSubmit={handleSubmit}>
-      <h2>Add application</h2>
-      <div className="form-row">
-        <div className="form-field">
-          <label htmlFor="company">Company</label>
-          <input
-            id="company"
-            value={company}
-            onChange={(e) => setCompany(e.target.value)}
-            required
-          />
-        </div>
-        <div className="form-field">
-          <label htmlFor="role">Role</label>
-          <input id="role" value={role} onChange={(e) => setRole(e.target.value)} required />
-        </div>
-        <div className="form-field">
-          <label htmlFor="status">Status</label>
-          <select
-            id="status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value as ApplicationStatus)}
-          >
-            {APPLICATION_STATUS_ORDER.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-      <div className="form-actions">
-        <button type="submit" className="btn btn-primary" disabled={submitting}>
-          {submitting ? 'Adding…' : 'Add application'}
+    <>
+      <div className="board-toolbar">
+        <button type="button" className="btn btn-primary" onClick={() => setIsOpen(true)}>
+          + Add application
         </button>
       </div>
-    </form>
+
+      <Modal
+        title="Add application"
+        isOpen={isOpen}
+        onClose={handleClose}
+        footer={
+          <div className="form-actions">
+            <button type="button" className="btn" onClick={handleClose} disabled={submitting}>
+              Cancel
+            </button>
+            <button type="submit" form="application-create-form" className="btn btn-primary" disabled={submitting}>
+              {submitting ? 'Adding…' : 'Add application'}
+            </button>
+          </div>
+        }
+      >
+        <form id="application-create-form" onSubmit={handleSubmit} noValidate>
+          {Object.keys(fieldErrors).length > 0 ? (
+            <p className="form-summary-error" role="alert">
+              Fix the highlighted fields before saving.
+            </p>
+          ) : null}
+          <ApplicationFormFields
+            values={values}
+            onChange={setValues}
+            errors={fieldErrors}
+            idPrefix="create"
+          />
+        </form>
+      </Modal>
+    </>
   );
 }
