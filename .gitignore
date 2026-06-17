@@ -5,3 +5,5 @@ build
 .DS_Store
 coverage
 backend/data/applications.json
+backend/data/cv-profiles.json
+backend/data/cvs/
