@@ -1,4 +1,4 @@
-import type { ApplicationStatus } from '@jat/shared';
+import type { ApplicationStatus, CvProfileSummary } from '@jat/shared';
 import { APPLICATION_STATUS_ORDER } from '@jat/shared';
 import { isValidApplicationLink, type ApplicationFormErrors } from '../validateApplicationForm';
 import { ContactsEditor, type ContactDraft } from './ContactsEditor';
@@ -13,6 +13,7 @@ export interface ApplicationFormValues {
   description: string;
   notes: string;
   contacts: ContactDraft[];
+  cvProfileId: string;
 }
 
 export const emptyFormValues = (): ApplicationFormValues => ({
@@ -25,6 +26,7 @@ export const emptyFormValues = (): ApplicationFormValues => ({
   description: '',
   notes: '',
   contacts: [],
+  cvProfileId: '',
 });
 
 interface ApplicationFormFieldsProps {
@@ -32,6 +34,8 @@ interface ApplicationFormFieldsProps {
   onChange: (values: ApplicationFormValues) => void;
   errors?: ApplicationFormErrors;
   idPrefix?: string;
+  cvProfiles?: CvProfileSummary[];
+  linkedCvLabel?: string;
 }
 
 function FieldError({ id, message }: { id: string; message?: string }) {
@@ -48,6 +52,8 @@ export function ApplicationFormFields({
   onChange,
   errors = {},
   idPrefix = 'app',
+  cvProfiles = [],
+  linkedCvLabel,
 }: ApplicationFormFieldsProps) {
   function set<K extends keyof ApplicationFormValues>(key: K, value: ApplicationFormValues[K]) {
     onChange({ ...values, [key]: value });
@@ -168,6 +174,23 @@ export function ApplicationFormFields({
         errors={errors}
         idPrefix={idPrefix}
       />
+
+      <div className="form-field">
+        <label htmlFor={`${idPrefix}-cv`}>CV sent with this application</label>
+        <select
+          id={`${idPrefix}-cv`}
+          value={values.cvProfileId}
+          onChange={(e) => set('cvProfileId', e.target.value)}
+        >
+          <option value="">None</option>
+          {cvProfiles.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.description} — {p.currentVersion.originalFilename}
+            </option>
+          ))}
+        </select>
+        {linkedCvLabel ? <p className="form-hint">{linkedCvLabel}</p> : null}
+      </div>
     </div>
   );
 }
@@ -192,5 +215,6 @@ export function formValuesToPayload(values: ApplicationFormValues) {
     description: values.description || undefined,
     notes: values.notes || undefined,
     contacts: contacts.length > 0 ? contacts : undefined,
+    cvProfileId: values.cvProfileId || undefined,
   };
 }

@@ -8,15 +8,17 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
-    "express": "^4",
+    "@jat/shared": "*",
     "cors": "^2",
-    "@jat/shared": "*"
+    "express": "^4",
+    "multer": "^2.2.0"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "tsx": "^4",
-    "@types/express": "^4",
     "@types/cors": "^2",
-    "@types/node": "^22"
+    "@types/express": "^4",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^22",
+    "tsx": "^4",
+    "typescript": "^5"
   }
 }

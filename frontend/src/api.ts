@@ -1,7 +1,11 @@
 import type {
-  Application,
+  ApplicationWithCv,
   ApiErrorBody,
   CreateApplicationInput,
+  CvProfileSummary,
+  CvLinkedApplication,
+  CvVersion,
+  CvVersionWithRefs,
   FollowUpRemindersResponse,
   UpdateApplicationInput,
 } from '@jat/shared';
@@ -43,9 +47,9 @@ export async function checkHealth(): Promise<boolean> {
   }
 }
 
-export async function fetchApplications(): Promise<Application[]> {
+export async function fetchApplications(): Promise<ApplicationWithCv[]> {
   const res = await fetch(`${BASE_URL}/applications`);
-  return handleJson<Application[]>(res);
+  return handleJson<ApplicationWithCv[]>(res);
 }
 
 export async function fetchFollowUps(): Promise<FollowUpRemindersResponse> {
@@ -55,25 +59,25 @@ export async function fetchFollowUps(): Promise<FollowUpRemindersResponse> {
 
 export async function createApplication(
   input: CreateApplicationInput,
-): Promise<Application> {
+): Promise<ApplicationWithCv> {
   const res = await fetch(`${BASE_URL}/applications`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
   });
-  return handleJson<Application>(res);
+  return handleJson<ApplicationWithCv>(res);
 }
 
 export async function updateApplication(
   id: string,
   input: UpdateApplicationInput,
-): Promise<Application> {
+): Promise<ApplicationWithCv> {
   const res = await fetch(`${BASE_URL}/applications/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(input),
   });
-  return handleJson<Application>(res);
+  return handleJson<ApplicationWithCv>(res);
 }
 
 export async function deleteApplication(id: string): Promise<void> {
@@ -81,4 +85,79 @@ export async function deleteApplication(id: string): Promise<void> {
   if (!res.ok) {
     throw new ApiError(await parseError(res), res.status);
   }
+}
+
+export function cvFileUrl(versionId: string, options?: { download?: boolean }): string {
+  const base = `${BASE_URL}/cv-versions/${versionId}/file`;
+  return options?.download ? `${base}?download=1` : base;
+}
+
+export function cvViewerUrl(versionId: string): string {
+  return `/cvs/view/${versionId}`;
+}
+
+export async function fetchCvVersion(versionId: string): Promise<CvVersion> {
+  const res = await fetch(`${BASE_URL}/cv-versions/${versionId}`);
+  return handleJson<CvVersion>(res);
+}
+
+export async function fetchCvProfiles(): Promise<CvProfileSummary[]> {
+  const res = await fetch(`${BASE_URL}/cv-profiles`);
+  return handleJson<CvProfileSummary[]>(res);
+}
+
+export async function fetchCvProfileVersions(profileId: string): Promise<CvVersionWithRefs[]> {
+  const res = await fetch(`${BASE_URL}/cv-profiles/${profileId}/versions`);
+  return handleJson<CvVersionWithRefs[]>(res);
+}
+
+export async function createCvProfile(description: string, file: File): Promise<CvProfileSummary> {
+  const form = new FormData();
+  form.append('description', description);
+  form.append('file', file);
+  const res = await fetch(`${BASE_URL}/cv-profiles`, { method: 'POST', body: form });
+  return handleJson<CvProfileSummary>(res);
+}
+
+export async function updateCvProfileDescription(
+  profileId: string,
+  description: string,
+): Promise<CvProfileSummary> {
+  const res = await fetch(`${BASE_URL}/cv-profiles/${profileId}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ description }),
+  });
+  return handleJson<CvProfileSummary>(res);
+}
+
+export async function uploadCvVersion(profileId: string, file: File): Promise<CvProfileSummary> {
+  const form = new FormData();
+  form.append('file', file);
+  const res = await fetch(`${BASE_URL}/cv-profiles/${profileId}/versions`, {
+    method: 'POST',
+    body: form,
+  });
+  return handleJson<CvProfileSummary>(res);
+}
+
+export async function deleteCvVersion(versionId: string): Promise<void> {
+  const res = await fetch(`${BASE_URL}/cv-versions/${versionId}`, { method: 'DELETE' });
+  if (!res.ok) {
+    throw new ApiError(await parseError(res), res.status);
+  }
+}
+
+export async function fetchCvProfileApplications(
+  profileId: string,
+): Promise<CvLinkedApplication[]> {
+  const res = await fetch(`${BASE_URL}/cv-profiles/${profileId}/applications`);
+  return handleJson<CvLinkedApplication[]>(res);
+}
+
+export async function fetchCvVersionApplications(
+  versionId: string,
+): Promise<CvLinkedApplication[]> {
+  const res = await fetch(`${BASE_URL}/cv-versions/${versionId}/applications`);
+  return handleJson<CvLinkedApplication[]>(res);
 }

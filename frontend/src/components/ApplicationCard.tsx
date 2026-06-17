@@ -1,13 +1,14 @@
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import type { Application, FollowUpReminder } from '@jat/shared';
+import type { ApplicationWithCv, FollowUpReminder } from '@jat/shared';
 import { cardDateLabel, contactSubtitle } from '../cardDateLabel';
+import { cvViewerUrl } from '../api';
 
 interface ApplicationCardProps {
-  application: Application;
+  application: ApplicationWithCv;
   reminder?: FollowUpReminder;
   onDelete: (id: string) => void;
-  onOpen: (application: Application) => void;
+  onOpen: (application: ApplicationWithCv) => void;
 }
 
 function TrashIcon() {
@@ -103,6 +104,19 @@ export function ApplicationCard({
                 onKeyDown={(e) => e.stopPropagation()}
               >
                 ↗
+              </a>
+            ) : null}
+            {application.cv ? (
+              <a
+                className="application-card-cv-icon"
+                href={cvViewerUrl(application.cv.versionId)}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`View CV: ${application.cv.originalFilename}`}
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => e.stopPropagation()}
+              >
+                📄
               </a>
             ) : null}
           </div>

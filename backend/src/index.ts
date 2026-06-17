@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import followUpsRouter from './routes/followUps.js';
+import cvProfilesRouter from './routes/cvProfiles.js';
 import applicationsRouter from './routes/applications.js';
 
 const app = express();
@@ -13,6 +14,7 @@ app.get('/health', (_req, res) => {
 });
 
 app.use(followUpsRouter);
+app.use(cvProfilesRouter);
 app.use(applicationsRouter);
 
 const PORT = process.env.PORT ?? 3001;

@@ -1,13 +1,13 @@
 import { useDroppable } from '@dnd-kit/core';
-import type { Application, ApplicationStatus, FollowUpReminder } from '@jat/shared';
+import type { ApplicationStatus, ApplicationWithCv, FollowUpReminder } from '@jat/shared';
 import { ApplicationCard } from './ApplicationCard';
 
 interface KanbanColumnProps {
   status: ApplicationStatus;
-  applications: Application[];
+  applications: ApplicationWithCv[];
   remindersByAppId: Map<string, FollowUpReminder>;
   onDelete: (id: string) => void;
-  onOpen: (application: Application) => void;
+  onOpen: (application: ApplicationWithCv) => void;
 }
 
 export function KanbanColumn({

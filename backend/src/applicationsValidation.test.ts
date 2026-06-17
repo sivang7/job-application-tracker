@@ -138,4 +138,20 @@ describe('validateUpdateInput', () => {
       expect(result.data.description).toBeUndefined();
     }
   });
+
+  it('accepts cvProfileId on create', () => {
+    const result = validateCreateInput({
+      company: 'Acme',
+      role: 'Eng',
+      cvProfileId: 'profile-1',
+    });
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.cvProfileId).toBe('profile-1');
+  });
+
+  it('allows clearing cvProfileId with null on update', () => {
+    const result = validateUpdateInput({ cvProfileId: null });
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.cvProfileId).toBeNull();
+  });
 });

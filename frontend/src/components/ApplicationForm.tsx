@@ -1,5 +1,6 @@
-import { useCallback, useState, type FormEvent } from 'react';
-import { ApiError, createApplication } from '../api';
+import { useCallback, useEffect, useState, type FormEvent } from 'react';
+import type { CvProfileSummary } from '@jat/shared';
+import { ApiError, createApplication, fetchCvProfiles } from '../api';
 import type { ApplicationFormErrors } from '../validateApplicationForm';
 import { validateApplicationForm } from '../validateApplicationForm';
 import {
@@ -20,6 +21,14 @@ export function ApplicationForm({ onCreated, onError }: ApplicationFormProps) {
   const [values, setValues] = useState<ApplicationFormValues>(emptyFormValues());
   const [fieldErrors, setFieldErrors] = useState<ApplicationFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
+  const [cvProfiles, setCvProfiles] = useState<CvProfileSummary[]>([]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    fetchCvProfiles()
+      .then(setCvProfiles)
+      .catch(() => setCvProfiles([]));
+  }, [isOpen]);
 
   const handleClose = useCallback(() => {
     if (submitting) return;
@@ -85,6 +94,7 @@ export function ApplicationForm({ onCreated, onError }: ApplicationFormProps) {
             onChange={setValues}
             errors={fieldErrors}
             idPrefix="create"
+            cvProfiles={cvProfiles}
           />
         </form>
       </Modal>

@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import type { Application } from '@jat/shared';
-import { ApiError, updateApplication } from '../api';
+import type { ApplicationWithCv, CvProfileSummary } from '@jat/shared';
+import { ApiError, cvViewerUrl, fetchCvProfiles, updateApplication } from '../api';
 import type { ApplicationFormErrors } from '../validateApplicationForm';
 import { validateApplicationForm } from '../validateApplicationForm';
 import {
@@ -12,7 +12,15 @@ import {
 import { contactsToDrafts } from './ContactsEditor';
 import { Modal } from './Modal';
 
-function applicationToFormValues(app: Application): ApplicationFormValues {
+function formatCvDate(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+function applicationToFormValues(app: ApplicationWithCv): ApplicationFormValues {
   return {
     company: app.company,
     role: app.role,
@@ -23,14 +31,15 @@ function applicationToFormValues(app: Application): ApplicationFormValues {
     description: app.description ?? '',
     notes: app.notes ?? '',
     contacts: contactsToDrafts(app.contacts),
+    cvProfileId: app.cv?.profileId ?? '',
   };
 }
 
 interface ApplicationDetailModalProps {
-  application: Application | null;
+  application: ApplicationWithCv | null;
   isOpen: boolean;
   onClose: () => void;
-  onSaved: (app: Application) => void;
+  onSaved: (app: ApplicationWithCv) => void;
   onError: (message: string) => void;
 }
 
@@ -42,12 +51,23 @@ export function ApplicationDetailModal({
   onError,
 }: ApplicationDetailModalProps) {
   const [values, setValues] = useState<ApplicationFormValues>(emptyFormValues());
+  const [initialCvProfileId, setInitialCvProfileId] = useState('');
   const [fieldErrors, setFieldErrors] = useState<ApplicationFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
+  const [cvProfiles, setCvProfiles] = useState<CvProfileSummary[]>([]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    fetchCvProfiles()
+      .then(setCvProfiles)
+      .catch(() => setCvProfiles([]));
+  }, [isOpen]);
 
   useEffect(() => {
     if (application && isOpen) {
-      setValues(applicationToFormValues(application));
+      const formValues = applicationToFormValues(application);
+      setValues(formValues);
+      setInitialCvProfileId(formValues.cvProfileId);
       setFieldErrors({});
     }
   }, [application, isOpen]);
@@ -80,7 +100,11 @@ export function ApplicationDetailModal({
         contacts:
           payload.contacts ??
           ((application.contacts?.length ?? 0) > 0 ? null : undefined),
-      };
+      } as Parameters<typeof updateApplication>[1];
+
+      if (values.cvProfileId !== initialCvProfileId) {
+        patch.cvProfileId = values.cvProfileId ? values.cvProfileId : null;
+      }
 
       const updated = await updateApplication(application.id, patch);
       onSaved(updated);
@@ -93,6 +117,10 @@ export function ApplicationDetailModal({
   }
 
   if (!application) return null;
+
+  const linkedCvLabel = application.cv
+    ? `Linked snapshot: ${application.cv.description} — ${application.cv.originalFilename} (uploaded ${formatCvDate(application.cv.uploadedAt)})`
+    : undefined;
 
   return (
     <Modal
@@ -116,11 +144,20 @@ export function ApplicationDetailModal({
             Fix the highlighted fields before saving.
           </p>
         ) : null}
+        {application.cv ? (
+          <p className="form-cv-view">
+            <a href={cvViewerUrl(application.cv.versionId)} target="_blank" rel="noopener noreferrer">
+              View linked CV ↗
+            </a>
+          </p>
+        ) : null}
         <ApplicationFormFields
           values={values}
           onChange={setValues}
           errors={fieldErrors}
           idPrefix="edit"
+          cvProfiles={cvProfiles}
+          linkedCvLabel={linkedCvLabel}
         />
       </form>
     </Modal>

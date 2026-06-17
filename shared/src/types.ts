@@ -14,6 +14,47 @@ export function isApplicationStatus(value: string): value is ApplicationStatus {
   return APPLICATION_STATUS_SET.has(value);
 }
 
+export type CvMimeType =
+  | 'application/pdf'
+  | 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+export interface CvVersion {
+  id: string;
+  profileId: string;
+  originalFilename: string;
+  mimeType: CvMimeType;
+  uploadedAt: string;
+}
+
+export interface CvProfile {
+  id: string;
+  description: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CvProfileSummary extends CvProfile {
+  currentVersion: CvVersion;
+  versionCount: number;
+  /** Total applications referencing any version; set by GET /cv-profiles. */
+  applicationCount?: number;
+}
+
+export interface ApplicationCvSnapshot {
+  versionId: string;
+  profileId: string;
+  description: string;
+  originalFilename: string;
+  uploadedAt: string;
+}
+
+export interface CvLinkedApplication {
+  id: string;
+  company: string;
+  role: string;
+  status: ApplicationStatus;
+}
+
 export interface CreateApplicationInput {
   company: string;
   role: string;
@@ -24,6 +65,7 @@ export interface CreateApplicationInput {
   description?: string;
   notes?: string;
   contacts?: Contact[];
+  cvProfileId?: string;
 }
 
 export type UpdateApplicationInput = {
@@ -36,6 +78,7 @@ export type UpdateApplicationInput = {
   description?: string | null;
   notes?: string | null;
   contacts?: Contact[] | null;
+  cvProfileId?: string | null;
 };
 
 export interface ApiErrorBody {
@@ -60,6 +103,13 @@ export interface Application {
   description?: string;
   notes?: string;
   contacts?: Contact[];
+  cvVersionId?: string;
+  /** Profile description captured when the CV link was saved. */
+  cvSnapshotDescription?: string;
+}
+
+export interface ApplicationWithCv extends Application {
+  cv?: ApplicationCvSnapshot;
 }
 
 export type FollowUpUrgency = 'low' | 'medium' | 'high';
@@ -77,6 +127,10 @@ export interface FollowUpReminder {
 
 export interface FollowUpConfig {
   thresholds: Partial<Record<ApplicationStatus, number>>;
+}
+
+export interface CvVersionWithRefs extends CvVersion {
+  referenceCount: number;
 }
 
 export interface FollowUpRemindersResponse {

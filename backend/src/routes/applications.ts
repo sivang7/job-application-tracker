@@ -7,11 +7,18 @@ import {
   updateApplication,
 } from '../store.js';
 import { validateCreateInput, validateUpdateInput } from '../applicationsValidation.js';
+import {
+  enrichApplication,
+  enrichApplications,
+  resolveCvLinkForCreate,
+  resolveCvLinkForUpdate,
+  stripCvProfileId,
+} from '../applicationCv.js';
 
 const router = Router();
 
 router.get('/applications', (_req, res) => {
-  res.json([...getApplications()]);
+  res.json(enrichApplications(getApplications()));
 });
 
 router.get('/applications/:id', (req, res) => {
@@ -20,7 +27,7 @@ router.get('/applications/:id', (req, res) => {
     res.status(404).json({ error: 'Application not found' });
     return;
   }
-  res.json(app);
+  res.json(enrichApplication(app));
 });
 
 router.post('/applications', (req, res) => {
@@ -30,8 +37,15 @@ router.post('/applications', (req, res) => {
     return;
   }
 
-  const app = createApplication(result.data);
-  res.status(201).json(app);
+  const cvResolution = resolveCvLinkForCreate(result.data);
+  if (!cvResolution.ok) {
+    res.status(cvResolution.status).json({ error: cvResolution.error });
+    return;
+  }
+
+  const input = stripCvProfileId(result.data);
+  const app = createApplication(input, cvResolution.cvLink);
+  res.status(201).json(enrichApplication(app));
 });
 
 router.patch('/applications/:id', (req, res) => {
@@ -41,12 +55,20 @@ router.patch('/applications/:id', (req, res) => {
     return;
   }
 
-  const app = updateApplication(req.params.id, result.data);
+  const cvResolution = resolveCvLinkForUpdate(result.data);
+  if (!cvResolution.ok) {
+    res.status(cvResolution.status).json({ error: cvResolution.error });
+    return;
+  }
+
+  const patch = stripCvProfileId(result.data);
+  const cvLink = cvResolution.clear ? { clear: true as const } : cvResolution.cvLink;
+  const app = updateApplication(req.params.id, patch, cvLink);
   if (!app) {
     res.status(404).json({ error: 'Application not found' });
     return;
   }
-  res.json(app);
+  res.json(enrichApplication(app));
 });
 
 router.delete('/applications/:id', (req, res) => {

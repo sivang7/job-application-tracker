@@ -23,13 +23,22 @@ npm run dev
   - `PATCH /applications/:id` → partial update
   - `DELETE /applications/:id` → 204 or 404
   - `GET /applications/follow-ups` → `{ "reminders": [...], "asOf": "YYYY-MM-DD" }` (optional `?asOf=YYYY-MM-DD`)
-- Frontend: http://localhost:5173 — board (`/board`) + stats dashboard (`/stats`); kanban with drag handle, click card to edit, date + overdue badges, **+ Add application** modal
+  - `GET /cv-profiles` → `CvProfileSummary[]`
+  - `POST /cv-profiles` → multipart create (description + PDF/DOCX file)
+  - `PATCH /cv-profiles/:id` → update description
+  - `POST /cv-profiles/:id/versions` → upload new version
+  - `GET /cv-profiles/:id/versions` → version history with reference counts
+  - `GET /cv-profiles/:id/applications` → linked applications (company, role, status)
+  - `GET /cv-versions/:id/applications` → applications using that version
+  - `GET /cv-versions/:id/file` → inline file for viewer (`?download=1` forces download)
+  - `DELETE /cv-versions/:id` → 204 or 409 if referenced by applications
+- Frontend: http://localhost:5173 — board (`/board`), stats (`/stats`), **CV Tracker** (`/cvs`), **CV viewer** (`/cvs/view/:versionId`); kanban with drag handle, click card to edit, date + overdue badges, CV icon opens viewer, **+ Add application** modal
 
-**Persistence:** applications are stored in `backend/data/applications.json` (gitignored). Data survives backend restarts. On first run, five demo applications are seeded. To reset to demo data, stop the backend and delete that file.
+**Persistence:** applications are stored in `backend/data/applications.json` (gitignored). CV metadata in `backend/data/cv-profiles.json`; binary files in `backend/data/cvs/` (gitignored). Data survives backend restarts. On first run, five demo applications are seeded. To reset to demo data, stop the backend and delete that file.
 
-Override the data path with `APPLICATIONS_DATA_FILE` (used by tests).
+Override paths with `APPLICATIONS_DATA_FILE`, `CV_METADATA_FILE`, or `CVS_DATA_DIR` (used by tests).
 
-Other scripts: `npm run build`, `npm test` (Vitest; 69 tests — backend + frontend).
+Other scripts: `npm run build`, `npm test` (Vitest; 93 tests — backend + frontend).
 
 ## Repo layout
 
@@ -47,6 +56,7 @@ Other scripts: `npm run build`, `npm test` (Vitest; 69 tests — backend + front
 Planned learning-track slices are complete. Post-track enhancement:
 
 5. ~~**Application details** (modals + extended fields + card badges)~~ — done (2026-06-14)
+6. ~~**CV Tracker** (versioned resumes, application linking, in-app viewer, linked-apps modal)~~ — done (2026-06-15)
 
 Earlier slices:
 

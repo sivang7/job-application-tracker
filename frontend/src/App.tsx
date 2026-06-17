@@ -11,6 +11,8 @@ import { ApplicationForm } from './components/ApplicationForm';
 import { KanbanBoard } from './components/KanbanBoard';
 import { RouteErrorBoundary } from './components/RouteErrorBoundary';
 import { StatsDashboard } from './components/StatsDashboard';
+import { CvTrackerPage } from './components/CvTrackerPage';
+import { CvViewerPage } from './components/CvViewerPage';
 import './App.css';
 
 type HealthState = 'checking' | 'ok' | 'unreachable';
@@ -40,12 +42,18 @@ export function App() {
   const healthClass =
     health === 'ok' ? 'health-ok' : health === 'unreachable' ? 'health-bad' : 'health-checking';
   const isStatsRoute = location.pathname === '/stats';
+  const isCvsRoute = location.pathname.startsWith('/cvs');
+  const isCvViewerRoute = location.pathname.startsWith('/cvs/view/');
 
   useEffect(() => {
-    document.title = isStatsRoute
-      ? 'Stats | Job Application Tracker'
-      : 'Board | Job Application Tracker';
-  }, [isStatsRoute]);
+    document.title = isCvViewerRoute
+      ? 'CV Viewer | Job Application Tracker'
+      : isStatsRoute
+        ? 'Stats | Job Application Tracker'
+        : isCvsRoute
+          ? 'CV Tracker | Job Application Tracker'
+          : 'Board | Job Application Tracker';
+  }, [isStatsRoute, isCvsRoute, isCvViewerRoute]);
 
   return (
     <main className="app">
@@ -55,7 +63,11 @@ export function App() {
           <p className="app-subtitle">
             {isStatsRoute
               ? 'Stats dashboard — pipeline and follow-up insights'
-              : 'Kanban board — drag cards between columns to update status'}
+              : isCvViewerRoute
+                ? 'CV viewer — preview and download resume files'
+                : isCvsRoute
+                  ? 'CV Tracker — manage resume versions and link them to applications'
+                  : 'Kanban board — drag cards between columns to update status'}
           </p>
         </div>
         <div className="header-right">
@@ -71,6 +83,12 @@ export function App() {
               className={({ isActive }) => `nav-link${isActive ? ' nav-link--active' : ''}`}
             >
               Stats
+            </NavLink>
+            <NavLink
+              to="/cvs"
+              className={({ isActive }) => `nav-link${isActive ? ' nav-link--active' : ''}`}
+            >
+              CV Tracker
             </NavLink>
           </nav>
           <span className={`health-badge ${healthClass}`}>
@@ -105,6 +123,22 @@ export function App() {
           element={
             <RouteErrorBoundary routeName="Stats">
               <StatsDashboard refreshKey={refreshKey} onError={setError} />
+            </RouteErrorBoundary>
+          }
+        />
+        <Route
+          path="/cvs/view/:versionId"
+          element={
+            <RouteErrorBoundary routeName="CV Viewer">
+              <CvViewerPage />
+            </RouteErrorBoundary>
+          }
+        />
+        <Route
+          path="/cvs"
+          element={
+            <RouteErrorBoundary routeName="CV Tracker">
+              <CvTrackerPage onError={setError} />
             </RouteErrorBoundary>
           }
         />

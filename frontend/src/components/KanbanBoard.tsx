@@ -9,7 +9,7 @@ import {
   type DragEndEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
-import type { Application, ApplicationStatus, FollowUpReminder } from '@jat/shared';
+import type { ApplicationStatus, ApplicationWithCv, FollowUpReminder } from '@jat/shared';
 import { APPLICATION_STATUS_ORDER, isApplicationStatus } from '@jat/shared';
 import {
   ApiError,
@@ -27,10 +27,12 @@ interface KanbanBoardProps {
   onError: (message: string) => void;
 }
 
-function groupByStatus(applications: Application[]): Record<ApplicationStatus, Application[]> {
+function groupByStatus(
+  applications: ApplicationWithCv[],
+): Record<ApplicationStatus, ApplicationWithCv[]> {
   const groups = Object.fromEntries(
-    APPLICATION_STATUS_ORDER.map((status) => [status, [] as Application[]]),
-  ) as Record<ApplicationStatus, Application[]>;
+    APPLICATION_STATUS_ORDER.map((status) => [status, [] as ApplicationWithCv[]]),
+  ) as Record<ApplicationStatus, ApplicationWithCv[]>;
 
   for (const app of applications) {
     groups[app.status].push(app);
@@ -39,7 +41,7 @@ function groupByStatus(applications: Application[]): Record<ApplicationStatus, A
 }
 
 function resolveDropStatus(
-  applications: Application[],
+  applications: ApplicationWithCv[],
   overId: string,
 ): ApplicationStatus | null {
   if (isApplicationStatus(overId)) return overId;
@@ -52,13 +54,13 @@ function remindersToMap(reminders: FollowUpReminder[]): Map<string, FollowUpRemi
 }
 
 export function KanbanBoard({ refreshKey, onError }: KanbanBoardProps) {
-  const [applications, setApplications] = useState<Application[]>([]);
+  const [applications, setApplications] = useState<ApplicationWithCv[]>([]);
   const [remindersByAppId, setRemindersByAppId] = useState<Map<string, FollowUpReminder>>(
     new Map(),
   );
   const [loading, setLoading] = useState(true);
-  const [activeApp, setActiveApp] = useState<Application | null>(null);
-  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+  const [activeApp, setActiveApp] = useState<ApplicationWithCv | null>(null);
+  const [selectedApp, setSelectedApp] = useState<ApplicationWithCv | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
 
   const sensors = useSensors(
@@ -137,7 +139,7 @@ export function KanbanBoard({ refreshKey, onError }: KanbanBoardProps) {
     }
   }
 
-  function handleOpen(application: Application) {
+  function handleOpen(application: ApplicationWithCv) {
     setSelectedApp(application);
     setDetailOpen(true);
   }
@@ -146,7 +148,7 @@ export function KanbanBoard({ refreshKey, onError }: KanbanBoardProps) {
     setDetailOpen(false);
   }, []);
 
-  function handleSaved(updated: Application) {
+  function handleSaved(updated: ApplicationWithCv) {
     setApplications((apps) => apps.map((a) => (a.id === updated.id ? updated : a)));
     void load();
   }

@@ -119,6 +119,14 @@ function validateStatus(value: unknown): ValidationResult<ApplicationStatus | un
   return { ok: true, data: value };
 }
 
+function optionalCvProfileId(value: unknown): ValidationResult<string | undefined> {
+  if (value === undefined) return { ok: true, data: undefined };
+  if (typeof value !== 'string' || !value.trim()) {
+    return { ok: false, error: 'cvProfileId must be a non-empty string' };
+  }
+  return { ok: true, data: value.trim() };
+}
+
 function validateContacts(value: unknown): ValidationResult<Contact[] | undefined> {
   if (value === undefined) return { ok: true, data: undefined };
   if (!Array.isArray(value)) {
@@ -189,6 +197,9 @@ export function validateCreateInput(body: unknown): ValidationResult<CreateAppli
   const contactsResult = validateContacts(raw.contacts);
   if (!contactsResult.ok) return contactsResult;
 
+  const cvProfileResult = optionalCvProfileId(raw.cvProfileId);
+  if (!cvProfileResult.ok) return cvProfileResult;
+
   const data: CreateApplicationInput = {
     company: companyResult.data,
     role: roleResult.data,
@@ -200,6 +211,7 @@ export function validateCreateInput(body: unknown): ValidationResult<CreateAppli
   if (descriptionResult.data !== undefined) data.description = descriptionResult.data;
   if (notesResult.data !== undefined) data.notes = notesResult.data;
   if (contactsResult.data !== undefined) data.contacts = contactsResult.data;
+  if (cvProfileResult.data !== undefined) data.cvProfileId = cvProfileResult.data;
 
   return { ok: true, data };
 }
@@ -294,6 +306,19 @@ export function validateUpdateInput(body: unknown): ValidationResult<UpdateAppli
       const contactsResult = validateContacts(raw.contacts);
       if (!contactsResult.ok) return contactsResult;
       data.contacts = contactsResult.data;
+    }
+  }
+
+  if ('cvProfileId' in raw) {
+    if (raw.cvProfileId === null) {
+      data.cvProfileId = null;
+    } else {
+      const cvResult = optionalCvProfileId(raw.cvProfileId);
+      if (!cvResult.ok) return cvResult;
+      if (cvResult.data === undefined) {
+        return { ok: false, error: 'cvProfileId must be a non-empty string' };
+      }
+      data.cvProfileId = cvResult.data;
     }
   }
 

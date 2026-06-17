@@ -170,3 +170,33 @@ Append-only record of squad and user decisions. The Scribe maintains this file.
 - Tester should use manual modal smoke checklist (type full sentence in each field) until interaction tests exist.
 
 **Outcome:** 69 Vitest tests; `npm run build` passes.
+
+---
+
+## 2026-06-15 — CV Tracker
+
+**Decision:** Add versioned CV profiles (PDF/DOCX) with immutable snapshots on job applications, a full tracker UI at `/cvs`, in-app file viewing, and drill-down into which applications used each profile or version.
+
+**Data model:**
+- `CvProfile` — description of when the CV is relevant
+- `CvVersion` — immutable PDF/DOCX file (`backend/data/cvs/{versionId}.ext`)
+- `Application.cvVersionId` + `cvSnapshotDescription` — snapshot at link time; never auto-updated on new upload
+- API write: `cvProfileId` on create/PATCH resolves to current version; `null` clears link
+- API read: optional `cv` snapshot on `ApplicationWithCv`
+
+**Backend:**
+- `multer` multipart upload; magic-byte validation (PDF/DOCX, 5 MB cap); `cv-profiles.json` metadata with atomic writes
+- `GET /cv-versions/:id`, `GET /cv-versions/:id/file` (`?download=1` for attachment)
+- `GET /cv-profiles/:id/applications` and `GET /cv-versions/:id/applications` — linked apps as `{ id, company, role, status }`
+- Delete version only when zero applications reference it
+
+**Frontend:**
+- `/cvs` nav tab; `CvCreateModal` (matches Board add-modal pattern); version history with per-version reference counts
+- `/cvs/view/:versionId` — PDF via blob iframe; DOCX via `docx-preview`; Download button
+- Profile header: `X versions · Used by Y applications` (clickable when Y > 0 → `CvApplicationsModal`)
+- Version history View links; board CV selector; card icon and edit-modal link open viewer
+- `CvApplicationsModal` — company, role, status table for profile- or version-level usage
+
+**Why immutable versions:** Jobs already applied keep the CV that was sent even after uploading a newer file to the same profile.
+
+**Outcome:** 93 Vitest tests; Reviewer Gate 2 APPROVED; `npm run build` passes.

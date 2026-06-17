@@ -5,7 +5,7 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 
 ## Feature
 
-Form polish — validation, focus fix, trash icon, interviewing threshold (implemented; pending commit).
+CV Tracker — versioned resumes, application linking, viewer, and linked-apps modal (implemented; pending commit).
 
 ## Phase
 
@@ -28,6 +28,7 @@ Complete — awaiting user commit.
 - Charter tightening: senior persona, Lead checklist, parallel protocol, good vs lazy examples
 - **Application details slice:** modals, extended fields, card badges
 - **Form polish slice:** client-side validation, modal focus fix, trash delete icon, interviewing threshold 4; 69 Vitest tests; Reviewer Gate 2 APPROVED
+- **CV Tracker:** versioned PDF/DOCX profiles (`/cvs`); immutable application snapshots; delete guards; `/cvs/view/:id` viewer (PDF iframe + docx-preview); `CvCreateModal`; profile/version usage counts; clickable "Used by N applications" modal (company, role, status); CV selector + card icon on board; 93 Vitest tests; Reviewer Gate 2 APPROVED
 
 ## Blocked
 
