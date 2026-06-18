@@ -14,6 +14,30 @@ export function isApplicationStatus(value: string): value is ApplicationStatus {
   return APPLICATION_STATUS_SET.has(value);
 }
 
+export const DEFAULT_JOB_SOURCES = [
+  'LinkedIn',
+  'Friend / referral',
+  'Company careers page',
+  'Cold outreach',
+] as const;
+
+export function collectJobSourceOptions(
+  applications: ReadonlyArray<Pick<Application, 'jobSource'>>,
+): string[] {
+  const defaults = [...DEFAULT_JOB_SOURCES];
+  const defaultSet = new Set<string>(defaults);
+  const custom = new Set<string>();
+
+  for (const app of applications) {
+    const trimmed = app.jobSource?.trim();
+    if (trimmed && !defaultSet.has(trimmed)) {
+      custom.add(trimmed);
+    }
+  }
+
+  return [...defaults, ...Array.from(custom).sort((a, b) => a.localeCompare(b))];
+}
+
 export type CvMimeType =
   | 'application/pdf'
   | 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
@@ -62,6 +86,7 @@ export interface CreateApplicationInput {
   appliedDate?: string;
   lastContactDate?: string;
   link?: string;
+  jobSource?: string;
   description?: string;
   notes?: string;
   contacts?: Contact[];
@@ -75,6 +100,7 @@ export type UpdateApplicationInput = {
   appliedDate?: string | null;
   lastContactDate?: string | null;
   link?: string | null;
+  jobSource?: string | null;
   description?: string | null;
   notes?: string | null;
   contacts?: Contact[] | null;
@@ -100,6 +126,7 @@ export interface Application {
   appliedDate?: string; // ISO date
   lastContactDate?: string; // ISO date
   link?: string;
+  jobSource?: string;
   description?: string;
   notes?: string;
   contacts?: Contact[];

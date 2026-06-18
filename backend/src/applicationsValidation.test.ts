@@ -110,6 +110,34 @@ describe('validateCreateInput', () => {
       expect(result.data.description).toBe('Great role');
     }
   });
+
+  it('accepts jobSource preset and custom values', () => {
+    const preset = validateCreateInput({
+      company: 'Acme',
+      role: 'Eng',
+      jobSource: 'LinkedIn',
+    });
+    expect(preset.ok).toBe(true);
+    if (preset.ok) expect(preset.data.jobSource).toBe('LinkedIn');
+
+    const custom = validateCreateInput({
+      company: 'Acme',
+      role: 'Eng',
+      jobSource: 'Jane Recruiter',
+    });
+    expect(custom.ok).toBe(true);
+    if (custom.ok) expect(custom.data.jobSource).toBe('Jane Recruiter');
+  });
+
+  it('rejects empty jobSource', () => {
+    const result = validateCreateInput({
+      company: 'Acme',
+      role: 'Eng',
+      jobSource: '   ',
+    });
+    expect(result.ok).toBe(false);
+    if (!result.ok) expect(result.error).toContain('jobSource');
+  });
 });
 
 describe('validateUpdateInput', () => {
@@ -153,5 +181,11 @@ describe('validateUpdateInput', () => {
     const result = validateUpdateInput({ cvProfileId: null });
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.data.cvProfileId).toBeNull();
+  });
+
+  it('allows clearing jobSource with null on update', () => {
+    const result = validateUpdateInput({ jobSource: null });
+    expect(result.ok).toBe(true);
+    if (result.ok) expect(result.data.jobSource).toBeUndefined();
   });
 });

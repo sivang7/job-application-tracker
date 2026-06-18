@@ -10,7 +10,7 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core';
 import type { ApplicationStatus, ApplicationWithCv, FollowUpReminder } from '@jat/shared';
-import { APPLICATION_STATUS_ORDER, isApplicationStatus } from '@jat/shared';
+import { APPLICATION_STATUS_ORDER, collectJobSourceOptions, isApplicationStatus } from '@jat/shared';
 import {
   ApiError,
   deleteApplication,
@@ -91,6 +91,11 @@ export function KanbanBoard({ refreshKey, onError }: KanbanBoardProps) {
     if (!selectedApp) return null;
     return applications.find((a) => a.id === selectedApp.id) ?? selectedApp;
   }, [applications, selectedApp]);
+
+  const jobSourceOptions = useMemo(
+    () => collectJobSourceOptions(applications),
+    [applications],
+  );
 
   function handleDragStart(event: DragStartEvent) {
     const app = applications.find((a) => a.id === event.active.id);
@@ -197,6 +202,7 @@ export function KanbanBoard({ refreshKey, onError }: KanbanBoardProps) {
         onClose={handleCloseDetail}
         onSaved={handleSaved}
         onError={onError}
+        jobSourceOptions={jobSourceOptions}
       />
     </>
   );

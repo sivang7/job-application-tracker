@@ -11,6 +11,7 @@ export type ApplicationFormFieldKey =
   | 'company'
   | 'role'
   | 'link'
+  | 'jobSource'
   | 'description'
   | 'notes'
   | `contacts.${number}.name`
@@ -68,6 +69,11 @@ export function validateApplicationForm(values: ApplicationFormValues): Validati
     } else if (!isValidApplicationLink(link)) {
       errors.link = 'Link must be a valid http or https URL';
     }
+  }
+
+  const jobSource = values.jobSource.trim();
+  if (jobSource.length > MAX_FIELD_LENGTH) {
+    errors.jobSource = `Job source must be at most ${MAX_FIELD_LENGTH} characters`;
   }
 
   if (values.description.length > MAX_NOTES_LENGTH) {

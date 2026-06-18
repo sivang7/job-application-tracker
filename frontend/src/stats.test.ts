@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import type { Application, ApplicationStatus, FollowUpReminder, FollowUpUrgency } from '@jat/shared';
-import { applicationsByMonth, computeApplicationStats, summarizeFollowUps } from './stats';
+import { applicationsByMonth, applicationsByJobSource, computeApplicationStats, summarizeFollowUps, JOB_SOURCE_NOT_SET } from './stats';
 
 function makeApplication(
   id: string,
   status: ApplicationStatus,
   appliedDate?: string,
+  jobSource?: string,
 ): Application {
   return {
     id,
@@ -13,6 +14,7 @@ function makeApplication(
     role: `Role ${id}`,
     status,
     appliedDate,
+    jobSource,
   };
 }
 
@@ -165,6 +167,40 @@ describe('applicationsByMonth', () => {
     expect(monthly).toEqual([
       { month: '2026-01', count: 2 },
       { month: '2026-02', count: 1 },
+    ]);
+  });
+});
+
+describe('applicationsByJobSource', () => {
+  it('groups by job source and buckets missing values as Not set', () => {
+    const applications: Application[] = [
+      makeApplication('1', 'applied', undefined, 'LinkedIn'),
+      makeApplication('2', 'applied', undefined, 'LinkedIn'),
+      makeApplication('3', 'applied', undefined, 'Jane Recruiter'),
+      makeApplication('4', 'wishlist'),
+      makeApplication('5', 'wishlist', undefined, '   '),
+    ];
+
+    const grouped = applicationsByJobSource(applications);
+
+    expect(grouped).toEqual([
+      { source: 'LinkedIn', count: 2 },
+      { source: JOB_SOURCE_NOT_SET, count: 2 },
+      { source: 'Jane Recruiter', count: 1 },
+    ]);
+  });
+
+  it('sorts ties alphabetically by source name', () => {
+    const applications: Application[] = [
+      makeApplication('1', 'applied', undefined, 'Beta'),
+      makeApplication('2', 'applied', undefined, 'Alpha'),
+    ];
+
+    const grouped = applicationsByJobSource(applications);
+
+    expect(grouped).toEqual([
+      { source: 'Alpha', count: 1 },
+      { source: 'Beta', count: 1 },
     ]);
   });
 });

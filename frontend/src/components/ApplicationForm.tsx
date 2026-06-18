@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import type { CvProfileSummary } from '@jat/shared';
-import { ApiError, createApplication, fetchCvProfiles } from '../api';
+import { collectJobSourceOptions, type CvProfileSummary } from '@jat/shared';
+import { ApiError, createApplication, fetchApplications, fetchCvProfiles } from '../api';
 import type { ApplicationFormErrors } from '../validateApplicationForm';
 import { validateApplicationForm } from '../validateApplicationForm';
 import {
@@ -22,12 +22,19 @@ export function ApplicationForm({ onCreated, onError }: ApplicationFormProps) {
   const [fieldErrors, setFieldErrors] = useState<ApplicationFormErrors>({});
   const [submitting, setSubmitting] = useState(false);
   const [cvProfiles, setCvProfiles] = useState<CvProfileSummary[]>([]);
+  const [jobSourceOptions, setJobSourceOptions] = useState<string[]>([]);
 
   useEffect(() => {
     if (!isOpen) return;
-    fetchCvProfiles()
-      .then(setCvProfiles)
-      .catch(() => setCvProfiles([]));
+    Promise.all([fetchCvProfiles(), fetchApplications()])
+      .then(([profiles, apps]) => {
+        setCvProfiles(profiles);
+        setJobSourceOptions(collectJobSourceOptions(apps));
+      })
+      .catch(() => {
+        setCvProfiles([]);
+        setJobSourceOptions([]);
+      });
   }, [isOpen]);
 
   const handleClose = useCallback(() => {
@@ -95,6 +102,7 @@ export function ApplicationForm({ onCreated, onError }: ApplicationFormProps) {
             errors={fieldErrors}
             idPrefix="create"
             cvProfiles={cvProfiles}
+            jobSourceOptions={jobSourceOptions}
           />
         </form>
       </Modal>

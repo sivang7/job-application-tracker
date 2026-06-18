@@ -10,6 +10,7 @@ export interface ApplicationFormValues {
   appliedDate: string;
   lastContactDate: string;
   link: string;
+  jobSource: string;
   description: string;
   notes: string;
   contacts: ContactDraft[];
@@ -23,6 +24,7 @@ export const emptyFormValues = (): ApplicationFormValues => ({
   appliedDate: '',
   lastContactDate: '',
   link: '',
+  jobSource: '',
   description: '',
   notes: '',
   contacts: [],
@@ -36,6 +38,7 @@ interface ApplicationFormFieldsProps {
   idPrefix?: string;
   cvProfiles?: CvProfileSummary[];
   linkedCvLabel?: string;
+  jobSourceOptions?: string[];
 }
 
 function FieldError({ id, message }: { id: string; message?: string }) {
@@ -54,6 +57,7 @@ export function ApplicationFormFields({
   idPrefix = 'app',
   cvProfiles = [],
   linkedCvLabel,
+  jobSourceOptions = [],
 }: ApplicationFormFieldsProps) {
   function set<K extends keyof ApplicationFormValues>(key: K, value: ApplicationFormValues[K]) {
     onChange({ ...values, [key]: value });
@@ -131,6 +135,32 @@ export function ApplicationFormFields({
             aria-describedby={errors.link ? `${idPrefix}-link-error` : undefined}
           />
           <FieldError id={`${idPrefix}-link-error`} message={errors.link} />
+        </div>
+      </div>
+
+      <div className="form-row">
+        <div className="form-field form-field--wide">
+          <label htmlFor={`${idPrefix}-jobSource`}>Where did you find this job?</label>
+          <input
+            id={`${idPrefix}-jobSource`}
+            list={`${idPrefix}-jobSource-list`}
+            value={values.jobSource}
+            onChange={(e) => set('jobSource', e.target.value)}
+            placeholder="e.g. LinkedIn"
+            aria-invalid={errors.jobSource ? true : undefined}
+            aria-describedby={
+              errors.jobSource ? `${idPrefix}-jobSource-error` : `${idPrefix}-jobSource-hint`
+            }
+          />
+          <datalist id={`${idPrefix}-jobSource-list`}>
+            {jobSourceOptions.map((source) => (
+              <option key={source} value={source} />
+            ))}
+          </datalist>
+          <p id={`${idPrefix}-jobSource-hint`} className="form-hint">
+            Pick a suggestion or type your own.
+          </p>
+          <FieldError id={`${idPrefix}-jobSource-error`} message={errors.jobSource} />
         </div>
       </div>
 
@@ -212,6 +242,7 @@ export function formValuesToPayload(values: ApplicationFormValues) {
     appliedDate: values.appliedDate || undefined,
     lastContactDate: values.lastContactDate || undefined,
     link: values.link.trim() || undefined,
+    jobSource: values.jobSource.trim() || undefined,
     description: values.description || undefined,
     notes: values.notes || undefined,
     contacts: contacts.length > 0 ? contacts : undefined,

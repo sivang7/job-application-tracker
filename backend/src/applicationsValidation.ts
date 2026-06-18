@@ -127,6 +127,21 @@ function optionalCvProfileId(value: unknown): ValidationResult<string | undefine
   return { ok: true, data: value.trim() };
 }
 
+function optionalJobSource(value: unknown): ValidationResult<string | undefined> {
+  if (value === undefined) return { ok: true, data: undefined };
+  if (typeof value !== 'string') {
+    return { ok: false, error: 'jobSource must be a string' };
+  }
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return { ok: false, error: 'jobSource cannot be empty' };
+  }
+  if (trimmed.length > MAX_FIELD_LENGTH) {
+    return { ok: false, error: `jobSource must be at most ${MAX_FIELD_LENGTH} characters` };
+  }
+  return { ok: true, data: trimmed };
+}
+
 function validateContacts(value: unknown): ValidationResult<Contact[] | undefined> {
   if (value === undefined) return { ok: true, data: undefined };
   if (!Array.isArray(value)) {
@@ -188,6 +203,9 @@ export function validateCreateInput(body: unknown): ValidationResult<CreateAppli
   const linkResult = optionalLink(raw.link);
   if (!linkResult.ok) return linkResult;
 
+  const jobSourceResult = optionalJobSource(raw.jobSource);
+  if (!jobSourceResult.ok) return jobSourceResult;
+
   const descriptionResult = optionalDescription(raw.description);
   if (!descriptionResult.ok) return descriptionResult;
 
@@ -208,6 +226,7 @@ export function validateCreateInput(body: unknown): ValidationResult<CreateAppli
   if (appliedResult.data !== undefined) data.appliedDate = appliedResult.data;
   if (lastContactResult.data !== undefined) data.lastContactDate = lastContactResult.data;
   if (linkResult.data !== undefined) data.link = linkResult.data;
+  if (jobSourceResult.data !== undefined) data.jobSource = jobSourceResult.data;
   if (descriptionResult.data !== undefined) data.description = descriptionResult.data;
   if (notesResult.data !== undefined) data.notes = notesResult.data;
   if (contactsResult.data !== undefined) data.contacts = contactsResult.data;
@@ -279,6 +298,16 @@ export function validateUpdateInput(body: unknown): ValidationResult<UpdateAppli
     }
   }
 
+  if ('jobSource' in raw) {
+    if (raw.jobSource === null) {
+      data.jobSource = undefined;
+    } else {
+      const jobSourceResult = optionalJobSource(raw.jobSource);
+      if (!jobSourceResult.ok) return jobSourceResult;
+      data.jobSource = jobSourceResult.data;
+    }
+  }
+
   if ('description' in raw) {
     if (raw.description === null) {
       data.description = undefined;
@@ -343,6 +372,10 @@ export function applyUpdate(app: Application, patch: UpdateApplicationInput): Ap
   if ('link' in patch) {
     if (patch.link) updated.link = patch.link;
     else delete updated.link;
+  }
+  if ('jobSource' in patch) {
+    if (patch.jobSource) updated.jobSource = patch.jobSource;
+    else delete updated.jobSource;
   }
   if ('description' in patch) {
     if (patch.description) updated.description = patch.description;

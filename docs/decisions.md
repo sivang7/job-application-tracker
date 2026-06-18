@@ -200,3 +200,17 @@ Append-only record of squad and user decisions. The Scribe maintains this file.
 **Why immutable versions:** Jobs already applied keep the CV that was sent even after uploading a newer file to the same profile.
 
 **Outcome:** 93 Vitest tests; Reviewer Gate 2 APPROVED; `npm run build` passes.
+
+---
+
+## 2026-06-18 — Job source field
+
+**Decision:** Optional `jobSource` string on applications — not a closed enum. Four built-in suggestions in `DEFAULT_JOB_SOURCES`: LinkedIn, Friend / referral, Company careers page, Cold outreach. Users can type any custom value (e.g. a recruiter's name); custom values merge into datalist suggestions via `collectJobSourceOptions()`.
+
+**UX:** Text input + HTML `<datalist>` in create/edit modals; not shown on Kanban cards (user preference). Stats page adds a recharts bar chart grouped by source; missing/blank values bucket as "Not set".
+
+**Validation:** Trimmed string, max 200 chars; PATCH `null` clears on disk.
+
+**Why open string vs enum:** User is still discovering sources; recruiter names etc. are one-off custom entries.
+
+**Outcome:** 98 Vitest tests; Reviewer Gate 2 APPROVED; `npm run build` passes.

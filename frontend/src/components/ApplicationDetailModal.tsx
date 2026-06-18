@@ -28,6 +28,7 @@ function applicationToFormValues(app: ApplicationWithCv): ApplicationFormValues 
     appliedDate: app.appliedDate ?? '',
     lastContactDate: app.lastContactDate ?? '',
     link: app.link ?? '',
+    jobSource: app.jobSource ?? '',
     description: app.description ?? '',
     notes: app.notes ?? '',
     contacts: contactsToDrafts(app.contacts),
@@ -41,6 +42,7 @@ interface ApplicationDetailModalProps {
   onClose: () => void;
   onSaved: (app: ApplicationWithCv) => void;
   onError: (message: string) => void;
+  jobSourceOptions?: string[];
 }
 
 export function ApplicationDetailModal({
@@ -49,6 +51,7 @@ export function ApplicationDetailModal({
   onClose,
   onSaved,
   onError,
+  jobSourceOptions = [],
 }: ApplicationDetailModalProps) {
   const [values, setValues] = useState<ApplicationFormValues>(emptyFormValues());
   const [initialCvProfileId, setInitialCvProfileId] = useState('');
@@ -95,6 +98,7 @@ export function ApplicationDetailModal({
         appliedDate: values.appliedDate || (application.appliedDate ? null : undefined),
         lastContactDate: values.lastContactDate || (application.lastContactDate ? null : undefined),
         link: values.link.trim() || (application.link ? null : undefined),
+        jobSource: values.jobSource.trim() || (application.jobSource ? null : undefined),
         description: values.description || (application.description ? null : undefined),
         notes: values.notes || (application.notes ? null : undefined),
         contacts:
@@ -158,6 +162,7 @@ export function ApplicationDetailModal({
           idPrefix="edit"
           cvProfiles={cvProfiles}
           linkedCvLabel={linkedCvLabel}
+          jobSourceOptions={jobSourceOptions}
         />
       </form>
     </Modal>

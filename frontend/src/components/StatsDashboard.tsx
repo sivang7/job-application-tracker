@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { ApiError, fetchApplications, fetchFollowUps } from '../api';
 import {
   applicationsByMonth,
+  applicationsByJobSource,
   computeApplicationStats,
   summarizeFollowUps,
   type ApplicationStats,
   type FollowUpSummary,
 } from '../stats';
 import { ApplicationsTimelineChart } from './ApplicationsTimelineChart';
+import { JobSourceChart } from './JobSourceChart';
 import { StatusChart } from './StatusChart';
 
 interface StatsDashboardProps {
@@ -29,6 +31,7 @@ export function StatsDashboard({ refreshKey, onError }: StatsDashboardProps) {
   const [loading, setLoading] = useState(true);
   const [applicationStats, setApplicationStats] = useState<ApplicationStats | null>(null);
   const [timelineData, setTimelineData] = useState<Array<{ month: string; count: number }>>([]);
+  const [jobSourceData, setJobSourceData] = useState<Array<{ source: string; count: number }>>([]);
   const [followUps, setFollowUps] = useState<FollowUpSummary | null>(null);
   const [followUpsFailed, setFollowUpsFailed] = useState(false);
 
@@ -50,6 +53,7 @@ export function StatsDashboard({ refreshKey, onError }: StatsDashboardProps) {
       if (applicationsResult.status === 'rejected') {
         setApplicationStats(null);
         setTimelineData([]);
+        setJobSourceData([]);
         onError(
           applicationsResult.reason instanceof ApiError
             ? applicationsResult.reason.message
@@ -62,6 +66,7 @@ export function StatsDashboard({ refreshKey, onError }: StatsDashboardProps) {
       const apps = applicationsResult.value;
       setApplicationStats(computeApplicationStats(apps));
       setTimelineData(applicationsByMonth(apps));
+      setJobSourceData(applicationsByJobSource(apps));
 
       if (followUpsResult.status === 'fulfilled') {
         setFollowUps(summarizeFollowUps(followUpsResult.value.reminders));
@@ -128,6 +133,11 @@ export function StatsDashboard({ refreshKey, onError }: StatsDashboardProps) {
       <section aria-labelledby="stats-status-heading">
         <h2 id="stats-status-heading">Applications by status</h2>
         <StatusChart byStatus={applicationStats.byStatus} total={applicationStats.total} />
+      </section>
+
+      <section aria-labelledby="stats-job-source-heading">
+        <h2 id="stats-job-source-heading">Applications by job source</h2>
+        <JobSourceChart data={jobSourceData} total={applicationStats.total} />
       </section>
 
       {timelineData.length > 0 ? (

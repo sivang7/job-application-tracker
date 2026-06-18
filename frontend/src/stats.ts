@@ -91,3 +91,21 @@ export function applicationsByMonth(
     .sort(([left], [right]) => left.localeCompare(right))
     .map(([month, count]) => ({ month, count }));
 }
+
+export const JOB_SOURCE_NOT_SET = 'Not set';
+
+export function applicationsByJobSource(
+  applications: Application[],
+): Array<{ source: string; count: number }> {
+  const grouped = new Map<string, number>();
+
+  for (const app of applications) {
+    const trimmed = app.jobSource?.trim();
+    const key = trimmed || JOB_SOURCE_NOT_SET;
+    grouped.set(key, (grouped.get(key) ?? 0) + 1);
+  }
+
+  return Array.from(grouped.entries())
+    .map(([source, count]) => ({ source, count }))
+    .sort((left, right) => right.count - left.count || left.source.localeCompare(right.source));
+}

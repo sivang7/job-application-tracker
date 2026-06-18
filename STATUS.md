@@ -5,7 +5,7 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 
 ## Feature
 
-CV Tracker — versioned resumes, application linking, viewer, and linked-apps modal (implemented; pending commit).
+Job source field — where you found each job (presets + custom values) and stats chart by source (implemented; pending commit).
 
 ## Phase
 
@@ -29,6 +29,7 @@ Complete — awaiting user commit.
 - **Application details slice:** modals, extended fields, card badges
 - **Form polish slice:** client-side validation, modal focus fix, trash delete icon, interviewing threshold 4; 69 Vitest tests; Reviewer Gate 2 APPROVED
 - **CV Tracker:** versioned PDF/DOCX profiles (`/cvs`); immutable application snapshots; delete guards; `/cvs/view/:id` viewer (PDF iframe + docx-preview); `CvCreateModal`; profile/version usage counts; clickable "Used by N applications" modal (company, role, status); CV selector + card icon on board; 93 Vitest tests; Reviewer Gate 2 APPROVED
+- **Job source:** optional `jobSource` on applications; four default suggestions (LinkedIn, Friend / referral, Company careers page, Cold outreach) plus free-text custom values; datalist in create/edit modals; bar chart on `/stats`; 98 Vitest tests; Reviewer Gate 2 APPROVED
 
 ## Blocked
 
