@@ -5,15 +5,15 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 
 ## Feature
 
-Job source field — where you found each job (presets + custom values) and stats chart by source (implemented; pending commit).
+Job source field — where you found each job (presets + custom values) and stats chart by source (committed).
 
 ## Phase
 
-Complete — awaiting user commit.
+Complete.
 
 ## Last commit
 
-`4bbfd90` — charter tightening + review lessons
+`15c91d9` — job source field with presets, custom values, and stats chart
 
 ## Done
 

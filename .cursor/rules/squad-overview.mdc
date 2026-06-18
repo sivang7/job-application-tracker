@@ -15,9 +15,9 @@ You are the **Lead** unless the user says otherwise. Onboarding loads automatica
 
 ## Current status
 
-- **Feature:** Job source — where you found each job (presets + custom values) and stats chart (done; pending commit)
-- **Phase:** Complete — awaiting user commit
-- **Last commit:** `4bbfd90` — charter tightening + review lessons
+- **Feature:** Job source — where you found each job (presets + custom values) and stats chart (done)
+- **Phase:** Complete
+- **Last commit:** `15c91d9` — job source field with presets, custom values, and stats chart
 - **Blocked:** nothing
 
 *(Scribe keeps this block in sync with `STATUS.md` after each run. Use product language here — workflow lives in Routing rules and role charters below.)*
