@@ -30,6 +30,7 @@ npm run dev
   - `GET /cv-profiles/:id/versions` → version history with reference counts
   - `GET /cv-profiles/:id/applications` → linked applications (company, role, status)
   - `GET /cv-versions/:id/applications` → applications using that version
+  - `GET /cv-versions/compare?from=:id&to=:id` → `CvVersionCompareResult` (text diff)
   - `GET /cv-versions/:id/file` → inline file for viewer (`?download=1` forces download)
   - `DELETE /cv-versions/:id` → 204 or 409 if referenced by applications
 - Frontend: http://localhost:5173 — board (`/board`), stats (`/stats`, includes job-source chart), **CV Tracker** (`/cvs`), **CV viewer** (`/cvs/view/:versionId`), **CV compare** (`/cvs/compare?from=&to=`); kanban with drag handle, click card to edit, date + overdue badges, CV icon opens viewer, **+ Add application** modal (optional job source with suggestions)
@@ -38,7 +39,7 @@ npm run dev
 
 Override paths with `APPLICATIONS_DATA_FILE`, `CV_METADATA_FILE`, or `CVS_DATA_DIR` (used by tests).
 
-Other scripts: `npm run build`, `npm test` (Vitest; 98 tests — backend + frontend).
+Other scripts: `npm run build`, `npm test` (Vitest; 110 tests — backend + frontend).
 
 ## Repo layout
 
@@ -58,7 +59,7 @@ Planned learning-track slices are complete. Post-track enhancement:
 5. ~~**Application details** (modals + extended fields + card badges)~~ — done (2026-06-14)
 6. ~~**CV Tracker** (versioned resumes, application linking, in-app viewer, linked-apps modal)~~ — done (2026-06-15)
 7. ~~**CV version compare** (git-style text diff, cross-profile selection)~~ — done (2026-06-18)
-7. ~~**Job source** (where you found the job — presets + custom values, stats chart)~~ — done (2026-06-18)
+8. ~~**Job source** (where you found the job — presets + custom values, stats chart)~~ — done (2026-06-18)
 
 Earlier slices:
 

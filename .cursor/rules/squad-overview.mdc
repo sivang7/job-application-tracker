@@ -15,9 +15,9 @@ You are the **Lead** unless the user says otherwise. Onboarding loads automatica
 
 ## Current status
 
-- **Feature:** CV version compare — git-style text diff between any two CV versions (done; pending commit)
-- **Phase:** Complete — awaiting user commit
-- **Last commit:** `569d838` — sync status docs after job source commit
+- **Feature:** CV version compare — git-style text diff between any two CV versions (done)
+- **Phase:** Complete
+- **Last commit:** `8031602` — Add CV version compare with git-style text diff
 - **Blocked:** nothing
 
 *(Scribe keeps this block in sync with `STATUS.md` after each run. Use product language here — workflow lives in Routing rules and role charters below.)*
