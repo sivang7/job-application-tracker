@@ -5,15 +5,15 @@ with the **Current status** block in `.cursor/rules/squad-overview.mdc`.
 
 ## Feature
 
-Job source field — where you found each job (presets + custom values) and stats chart by source (committed).
+CV version compare — git-style text diff between any two CV versions (same profile or across profiles).
 
 ## Phase
 
-Complete.
+Complete — awaiting user commit.
 
 ## Last commit
 
-`15c91d9` — job source field with presets, custom values, and stats chart
+`569d838` — sync status docs after job source commit
 
 ## Done
 
@@ -30,6 +30,7 @@ Complete.
 - **Form polish slice:** client-side validation, modal focus fix, trash delete icon, interviewing threshold 4; 69 Vitest tests; Reviewer Gate 2 APPROVED
 - **CV Tracker:** versioned PDF/DOCX profiles (`/cvs`); immutable application snapshots; delete guards; `/cvs/view/:id` viewer (PDF iframe + docx-preview); `CvCreateModal`; profile/version usage counts; clickable "Used by N applications" modal (company, role, status); CV selector + card icon on board; 93 Vitest tests; Reviewer Gate 2 APPROVED
 - **Job source:** optional `jobSource` on applications; four default suggestions (LinkedIn, Friend / referral, Company careers page, Cold outreach) plus free-text custom values; datalist in create/edit modals; bar chart on `/stats`; 98 Vitest tests; Reviewer Gate 2 APPROVED
+- **CV compare:** backend text extraction (`pdf-parse`, `mammoth`); `GET /cv-versions/compare`; cross-profile checkbox selection on tracker; `/cvs/compare` page with `react-diff-viewer-continued` (split/unified); 107 Vitest tests; Reviewer Gate 2 APPROVED
 
 ## Blocked
 

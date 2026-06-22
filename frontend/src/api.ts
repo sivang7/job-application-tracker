@@ -5,6 +5,7 @@ import type {
   CvProfileSummary,
   CvLinkedApplication,
   CvVersion,
+  CvVersionCompareResult,
   CvVersionWithRefs,
   FollowUpRemindersResponse,
   UpdateApplicationInput,
@@ -94,6 +95,20 @@ export function cvFileUrl(versionId: string, options?: { download?: boolean }): 
 
 export function cvViewerUrl(versionId: string): string {
   return `/cvs/view/${versionId}`;
+}
+
+export function cvCompareUrl(fromId: string, toId: string): string {
+  const params = new URLSearchParams({ from: fromId, to: toId });
+  return `/cvs/compare?${params.toString()}`;
+}
+
+export async function fetchCvVersionCompare(
+  fromId: string,
+  toId: string,
+): Promise<CvVersionCompareResult> {
+  const params = new URLSearchParams({ from: fromId, to: toId });
+  const res = await fetch(`${BASE_URL}/cv-versions/compare?${params.toString()}`);
+  return handleJson<CvVersionCompareResult>(res);
 }
 
 export async function fetchCvVersion(versionId: string): Promise<CvVersion> {

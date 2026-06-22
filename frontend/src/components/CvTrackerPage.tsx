@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { CvLinkedApplication, CvProfileSummary, CvVersionWithRefs } from '@jat/shared';
 import {
   ApiError,
+  cvCompareUrl,
   cvViewerUrl,
   deleteCvVersion,
   fetchCvProfileApplications,
@@ -13,8 +14,15 @@ import {
 } from '../api';
 import { CvApplicationsModal } from './CvApplicationsModal';
 import { CvCreateModal } from './CvCreateModal';
+
 interface CvTrackerPageProps {
   onError: (message: string) => void;
+}
+
+export interface CvVersionSelection {
+  versionId: string;
+  profileDescription: string;
+  filename: string;
 }
 
 function formatUploadedAt(iso: string): string {
@@ -29,6 +37,8 @@ interface CvProfileCardProps {
   profile: CvProfileSummary;
   onError: (message: string) => void;
   onChanged: () => void;
+  selectedVersions: CvVersionSelection[];
+  onToggleVersionSelect: (info: CvVersionSelection) => void;
 }
 
 function UsedByApplicationsLabel({
@@ -49,7 +59,38 @@ function UsedByApplicationsLabel({
   );
 }
 
-function CvProfileCard({ profile, onError, onChanged }: CvProfileCardProps) {
+function VersionCompareCheckbox({
+  versionId,
+  profileDescription,
+  filename,
+  selectedVersions,
+  onToggleVersionSelect,
+}: {
+  versionId: string;
+  profileDescription: string;
+  filename: string;
+  selectedVersions: CvVersionSelection[];
+  onToggleVersionSelect: (info: CvVersionSelection) => void;
+}) {
+  const checked = selectedVersions.some((s) => s.versionId === versionId);
+  return (
+    <input
+      type="checkbox"
+      className="cv-compare-checkbox"
+      checked={checked}
+      aria-label={`Select ${filename} for comparison`}
+      onChange={() => onToggleVersionSelect({ versionId, profileDescription, filename })}
+    />
+  );
+}
+
+function CvProfileCard({
+  profile,
+  onError,
+  onChanged,
+  selectedVersions,
+  onToggleVersionSelect,
+}: CvProfileCardProps) {
   const [description, setDescription] = useState(profile.description);
   const [versionsOpen, setVersionsOpen] = useState(false);
   const [versions, setVersions] = useState<CvVersionWithRefs[]>([]);
@@ -62,6 +103,7 @@ function CvProfileCard({ profile, onError, onChanged }: CvProfileCardProps) {
   const [appsModalApps, setAppsModalApps] = useState<CvLinkedApplication[]>([]);
   const [appsModalLoading, setAppsModalLoading] = useState(false);
   const [appsModalError, setAppsModalError] = useState('');
+
   useEffect(() => {
     setDescription(profile.description);
   }, [profile.description]);
@@ -156,6 +198,12 @@ function CvProfileCard({ profile, onError, onChanged }: CvProfileCardProps) {
     );
   }
 
+  const selectionProps = {
+    profileDescription: profile.description,
+    selectedVersions,
+    onToggleVersionSelect,
+  };
+
   return (
     <article className="cv-profile-card">
       <CvApplicationsModal
@@ -165,7 +213,8 @@ function CvProfileCard({ profile, onError, onChanged }: CvProfileCardProps) {
         loading={appsModalLoading}
         error={appsModalError || undefined}
         onClose={() => setAppsModalOpen(false)}
-      />      <div className="cv-profile-card-header">
+      />
+      <div className="cv-profile-card-header">
         <h3 className="cv-profile-card-title">CV profile</h3>
         <span className="cv-profile-card-meta">
           {profile.versionCount} version{profile.versionCount === 1 ? '' : 's'}
@@ -176,7 +225,8 @@ function CvProfileCard({ profile, onError, onChanged }: CvProfileCardProps) {
               (profile.applicationCount ?? 0) > 0 ? openProfileApplications : undefined
             }
           />
-        </span>      </div>
+        </span>
+      </div>
 
       <div className="form-field">
         <label htmlFor={`cv-desc-${profile.id}`}>When is this CV relevant?</label>
@@ -197,6 +247,11 @@ function CvProfileCard({ profile, onError, onChanged }: CvProfileCardProps) {
       </div>
 
       <div className="cv-profile-current">
+        <VersionCompareCheckbox
+          versionId={profile.currentVersion.id}
+          filename={profile.currentVersion.originalFilename}
+          {...selectionProps}
+        />
         <strong>Current file:</strong> {profile.currentVersion.originalFilename}
         <span className="cv-profile-date">
           uploaded {formatUploadedAt(profile.currentVersion.uploadedAt)}
@@ -246,7 +301,12 @@ function CvProfileCard({ profile, onError, onChanged }: CvProfileCardProps) {
             <ul>
               {versions.map((v) => (
                 <li key={v.id} className="cv-version-row">
-                  <div>
+                  <div className="cv-version-row-main">
+                    <VersionCompareCheckbox
+                      versionId={v.id}
+                      filename={v.originalFilename}
+                      {...selectionProps}
+                    />
                     <span className="cv-version-filename">{v.originalFilename}</span>
                     <span className="cv-version-date">{formatUploadedAt(v.uploadedAt)}</span>
                     <span className="cv-version-refs">
@@ -254,7 +314,8 @@ function CvProfileCard({ profile, onError, onChanged }: CvProfileCardProps) {
                         count={v.referenceCount}
                         onClick={v.referenceCount > 0 ? () => openVersionApplications(v) : undefined}
                       />
-                    </span>                  </div>
+                    </span>
+                  </div>
                   <div className="cv-version-row-actions">
                     <a
                       className="btn btn-sm"
@@ -288,10 +349,25 @@ function CvProfileCard({ profile, onError, onChanged }: CvProfileCardProps) {
   );
 }
 
+function toggleVersionSelection(
+  current: CvVersionSelection[],
+  info: CvVersionSelection,
+): CvVersionSelection[] {
+  const idx = current.findIndex((s) => s.versionId === info.versionId);
+  if (idx >= 0) {
+    return current.filter((_, i) => i !== idx);
+  }
+  if (current.length < 2) {
+    return [...current, info];
+  }
+  return [current[1], info];
+}
+
 export function CvTrackerPage({ onError }: CvTrackerPageProps) {
   const [profiles, setProfiles] = useState<CvProfileSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [createOpen, setCreateOpen] = useState(false);
+  const [selectedVersions, setSelectedVersions] = useState<CvVersionSelection[]>([]);
 
   async function loadProfiles() {
     setLoading(true);
@@ -310,6 +386,18 @@ export function CvTrackerPage({ onError }: CvTrackerPageProps) {
     void loadProfiles();
   }, []);
 
+  function handleToggleVersionSelect(info: CvVersionSelection) {
+    setSelectedVersions((prev) => toggleVersionSelection(prev, info));
+  }
+
+  function handleCompareSelected() {
+    if (selectedVersions.length !== 2) return;
+    const [a, b] = selectedVersions;
+    window.open(cvCompareUrl(a.versionId, b.versionId), '_blank', 'noopener,noreferrer');
+  }
+
+  const canCompare = selectedVersions.length === 2;
+
   return (
     <section className="cv-tracker">
       <div className="board-toolbar">
@@ -327,6 +415,42 @@ export function CvTrackerPage({ onError }: CvTrackerPageProps) {
 
       <div className="cv-profile-list">
         <h2>Your CV profiles</h2>
+
+        {profiles.length >= 1 ? (
+          <div className="cv-compare-bar">
+            <p className="cv-compare-bar-hint">
+              Select two versions to compare — same profile or across profiles.
+            </p>
+            {selectedVersions.length > 0 ? (
+              <div className="cv-compare-bar-selection">
+                <span>
+                  {selectedVersions.length} selected
+                  {selectedVersions.map((s) => (
+                    <span key={s.versionId} className="cv-compare-bar-chip">
+                      {s.profileDescription} — {s.filename}
+                    </span>
+                  ))}
+                </span>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-primary"
+                  disabled={!canCompare}
+                  onClick={handleCompareSelected}
+                >
+                  Compare selected
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm"
+                  onClick={() => setSelectedVersions([])}
+                >
+                  Clear
+                </button>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
+
         {loading ? (
           <p className="cv-muted">Loading…</p>
         ) : profiles.length === 0 ? (
@@ -340,6 +464,8 @@ export function CvTrackerPage({ onError }: CvTrackerPageProps) {
               profile={p}
               onError={onError}
               onChanged={() => void loadProfiles()}
+              selectedVersions={selectedVersions}
+              onToggleVersionSelect={handleToggleVersionSelect}
             />
           ))
         )}

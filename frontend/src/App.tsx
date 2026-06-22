@@ -13,6 +13,7 @@ import { RouteErrorBoundary } from './components/RouteErrorBoundary';
 import { StatsDashboard } from './components/StatsDashboard';
 import { CvTrackerPage } from './components/CvTrackerPage';
 import { CvViewerPage } from './components/CvViewerPage';
+import { CvComparePage } from './components/CvComparePage';
 import './App.css';
 
 type HealthState = 'checking' | 'ok' | 'unreachable';
@@ -44,16 +45,19 @@ export function App() {
   const isStatsRoute = location.pathname === '/stats';
   const isCvsRoute = location.pathname.startsWith('/cvs');
   const isCvViewerRoute = location.pathname.startsWith('/cvs/view/');
+  const isCvCompareRoute = location.pathname.startsWith('/cvs/compare');
 
   useEffect(() => {
-    document.title = isCvViewerRoute
-      ? 'CV Viewer | Job Application Tracker'
-      : isStatsRoute
-        ? 'Stats | Job Application Tracker'
-        : isCvsRoute
-          ? 'CV Tracker | Job Application Tracker'
-          : 'Board | Job Application Tracker';
-  }, [isStatsRoute, isCvsRoute, isCvViewerRoute]);
+    document.title = isCvCompareRoute
+      ? 'Compare CVs | Job Application Tracker'
+      : isCvViewerRoute
+        ? 'CV Viewer | Job Application Tracker'
+        : isStatsRoute
+          ? 'Stats | Job Application Tracker'
+          : isCvsRoute
+            ? 'CV Tracker | Job Application Tracker'
+            : 'Board | Job Application Tracker';
+  }, [isStatsRoute, isCvsRoute, isCvViewerRoute, isCvCompareRoute]);
 
   return (
     <main className="app">
@@ -63,11 +67,13 @@ export function App() {
           <p className="app-subtitle">
             {isStatsRoute
               ? 'Stats dashboard — pipeline and follow-up insights'
-              : isCvViewerRoute
-                ? 'CV viewer — preview and download resume files'
-                : isCvsRoute
-                  ? 'CV Tracker — manage resume versions and link them to applications'
-                  : 'Kanban board — drag cards between columns to update status'}
+              : isCvCompareRoute
+                ? 'CV compare — git-style text diff between two versions'
+                : isCvViewerRoute
+                  ? 'CV viewer — preview and download resume files'
+                  : isCvsRoute
+                    ? 'CV Tracker — manage resume versions and link them to applications'
+                    : 'Kanban board — drag cards between columns to update status'}
           </p>
         </div>
         <div className="header-right">
@@ -123,6 +129,14 @@ export function App() {
           element={
             <RouteErrorBoundary routeName="Stats">
               <StatsDashboard refreshKey={refreshKey} onError={setError} />
+            </RouteErrorBoundary>
+          }
+        />
+        <Route
+          path="/cvs/compare"
+          element={
+            <RouteErrorBoundary routeName="CV Compare">
+              <CvComparePage />
             </RouteErrorBoundary>
           }
         />

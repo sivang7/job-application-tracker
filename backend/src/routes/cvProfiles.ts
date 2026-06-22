@@ -8,6 +8,7 @@ import {
   listApplicationsForCvVersion,
 } from '../applicationCv.js';
 import { getCvFilePath } from '../cvPersistence.js';
+import { compareCvVersions } from '../cvCompare.js';
 import {
   createCvProfile,
   deleteCvVersion,
@@ -91,6 +92,17 @@ router.post('/cv-profiles/:id/versions', upload.single('file'), (req, res) => {
     return;
   }
   res.json(withApplicationCount(result.data));
+});
+
+router.get('/cv-versions/compare', async (req, res) => {
+  const fromId = typeof req.query.from === 'string' ? req.query.from : '';
+  const toId = typeof req.query.to === 'string' ? req.query.to : '';
+  const result = await compareCvVersions(fromId, toId);
+  if (!result.ok) {
+    res.status(result.status).json({ error: result.error });
+    return;
+  }
+  res.json(result.data);
 });
 
 router.get('/cv-versions/:id/applications', (req, res) => {

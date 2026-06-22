@@ -214,3 +214,15 @@ Append-only record of squad and user decisions. The Scribe maintains this file.
 **Why open string vs enum:** User is still discovering sources; recruiter names etc. are one-off custom entries.
 
 **Outcome:** 98 Vitest tests; Reviewer Gate 2 APPROVED; `npm run build` passes.
+
+---
+
+## 2026-06-18 — CV version compare
+
+**Decision:** Compare any two CV versions (same profile or across profiles) via git-style text diff. Backend extracts plain text on demand (`pdf-parse` for PDF, `mammoth` for DOCX); no stored text layer. API: `GET /cv-versions/compare?from=&to=` returns `CvVersionCompareResult` with profile description per side; older file is always `from`, newer is `to`.
+
+**UX:** Global checkboxes on CV Tracker (current file + version history rows); page-level compare bar when ≥1 selected; **Compare selected** opens `/cvs/compare?from=&to=` in a new tab. Compare page uses `react-diff-viewer-continued` with split/unified toggle. UI notes text-only limits and scanned-PDF caveats.
+
+**Why backend extraction:** Keeps frontend bundle smaller; single place for PDF/DOCX parsing; reuse existing file storage unchanged.
+
+**Outcome:** 107 Vitest tests; Reviewer Gate 2 APPROVED; `npm run build` passes.

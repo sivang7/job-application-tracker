@@ -646,6 +646,10 @@
 .cv-profile-current {
   margin: 0.75rem 0;
   font-size: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .cv-profile-date {
@@ -823,4 +827,113 @@
 .cv-apps-table th {
   color: #6b7280;
   font-weight: 600;
+}
+
+.cv-compare-bar {
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 8px;
+}
+
+.cv-compare-bar-hint {
+  margin: 0 0 0.5rem;
+  font-size: 0.9rem;
+  color: #374151;
+}
+
+.cv-compare-bar-selection {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.cv-compare-bar-chip {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.5rem;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.cv-compare-checkbox {
+  margin-right: 0.5rem;
+  flex-shrink: 0;
+}
+
+.cv-version-row-main {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.cv-compare {
+  display: grid;
+  gap: 1rem;
+}
+
+.cv-compare-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cv-compare-title {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+}
+
+.cv-compare-hint {
+  margin: 0;
+  max-width: 40rem;
+}
+
+.cv-compare-view-toggle {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.cv-compare-labels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .cv-compare-labels {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cv-compare-side {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.75rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.cv-compare-side-tag {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #6b7280;
+}
+
+.cv-compare-diff {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: auto;
+  max-height: 75vh;
 }

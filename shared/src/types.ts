@@ -160,6 +160,18 @@ export interface CvVersionWithRefs extends CvVersion {
   referenceCount: number;
 }
 
+export interface CvVersionCompareSide {
+  version: CvVersion;
+  profileDescription: string;
+}
+
+export interface CvVersionCompareResult {
+  from: CvVersionCompareSide;
+  to: CvVersionCompareSide;
+  fromText: string;
+  toText: string;
+}
+
 export interface FollowUpRemindersResponse {
   reminders: FollowUpReminder[];
   asOf: string;
