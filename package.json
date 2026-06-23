@@ -1,7 +1,10 @@
 {
   "name": "job-application-tracker",
-  "private": true,
+  "private": false,
   "version": "0.0.0",
+  "engines": {
+    "node": ">=20"
+  },
   "workspaces": [
     "shared",
     "backend",
@@ -12,7 +15,9 @@
     "dev:backend": "npm -w shared run build && npm -w backend run dev",
     "dev:frontend": "npm -w frontend run dev",
     "build": "npm -w shared run build && npm -w backend run build && npm -w frontend run build",
-    "test": "vitest run"
+    "test": "vitest run",
+    "seed:demo": "node scripts/seed-demo.mjs",
+    "generate:demo-pdfs": "node scripts/generate-demo-pdfs.mjs"
   },
   "devDependencies": {
     "concurrently": "^9",

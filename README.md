@@ -1,12 +1,29 @@
 # Job Application Tracker
 
-A hands-on sandbox for learning AI agent "squads" in Cursor, built as a useful
-**job-search tool** and portfolio piece (React + TypeScript + Node).
+A full-stack **job-search tool** (React + TypeScript + Node.js) and a hands-on **Cursor AI squad** portfolio piece.
 
-The squad itself builds this app. Role charters live in [`.cursor/rules/`](.cursor/rules/).
-New agent sessions: see [`START_SQUAD.md`](START_SQUAD.md).
+Use it to track applications on a kanban board, manage CV versions, compare resume diffs, and review pipeline stats. The repo also documents how a multi-role AI agent squad built and governed the project — with role charters, Reviewer gates, and an append-only [decision log](docs/decisions.md).
+
+These [`.cursor/rules/`](.cursor/rules/) are intentional: they show how I constrain AI agents on real work. New agent sessions: see [`START_SQUAD.md`](START_SQUAD.md) — minimal prompt: *"You are the Lead. Execute the current step."*
+
+## Quick tour
+
+| Area | What you get |
+|------|----------------|
+| **Board** | Kanban drag-and-drop, detail modals, follow-up overdue badges, CV links |
+| **Stats** | Pipeline charts, job-source breakdown, follow-up urgency counts |
+| **CV Tracker** | Versioned PDF/DOCX profiles, in-app viewer, application linking |
+| **CV Compare** | Git-style text diff between any two versions |
+
+| Board | Stats | CV Compare |
+|-------|-------|------------|
+| ![Kanban board](docs/screenshots/board.png) | ![Stats dashboard](docs/screenshots/stats.png) | ![CV compare](docs/screenshots/cv-compare.png) |
+
+*Screenshots use fictional John Doe demo data (`npm run seed:demo`).*
 
 ## Run locally
+
+**Requirements:** Node.js 20+
 
 ```bash
 npm install
@@ -16,59 +33,64 @@ npm run dev
 (`dev:backend` builds `shared/` first, then starts the API.)
 
 - Backend: http://localhost:3001
-  - `GET /health` → `{ "status": "ok" }`
-  - `GET /applications` → `Application[]`
-  - `GET /applications/:id` → `Application` or 404
-  - `POST /applications` → create (body: `company`, `role`, optional `status`, dates, `link`, `jobSource`, `description`, `notes`, `contacts` with optional `phone`)
-  - `PATCH /applications/:id` → partial update
-  - `DELETE /applications/:id` → 204 or 404
-  - `GET /applications/follow-ups` → `{ "reminders": [...], "asOf": "YYYY-MM-DD" }` (optional `?asOf=YYYY-MM-DD`)
-  - `GET /cv-profiles` → `CvProfileSummary[]`
-  - `POST /cv-profiles` → multipart create (description + PDF/DOCX file)
-  - `PATCH /cv-profiles/:id` → update description
-  - `POST /cv-profiles/:id/versions` → upload new version
-  - `GET /cv-profiles/:id/versions` → version history with reference counts
-  - `GET /cv-profiles/:id/applications` → linked applications (company, role, status)
-  - `GET /cv-versions/:id/applications` → applications using that version
-  - `GET /cv-versions/compare?from=:id&to=:id` → `CvVersionCompareResult` (text diff)
-  - `GET /cv-versions/:id/file` → inline file for viewer (`?download=1` forces download)
-  - `DELETE /cv-versions/:id` → 204 or 409 if referenced by applications
-- Frontend: http://localhost:5173 — board (`/board`), stats (`/stats`, includes job-source chart), **CV Tracker** (`/cvs`), **CV viewer** (`/cvs/view/:versionId`), **CV compare** (`/cvs/compare?from=&to=`); kanban with drag handle, click card to edit, date + overdue badges, CV icon opens viewer, **+ Add application** modal (optional job source with suggestions)
+- Frontend: http://localhost:5173 — board (`/board`), stats (`/stats`), CV Tracker (`/cvs`), viewer (`/cvs/view/:versionId`), compare (`/cvs/compare?from=&to=`)
 
-**Persistence:** applications are stored in `backend/data/applications.json` (gitignored). CV metadata in `backend/data/cv-profiles.json`; binary files in `backend/data/cvs/` (gitignored). Data survives backend restarts. On first run, five demo applications are seeded. To reset to demo data, stop the backend and delete that file.
+### Demo data
 
-Override paths with `APPLICATIONS_DATA_FILE`, `CV_METADATA_FILE`, or `CVS_DATA_DIR` (used by tests).
+For README screenshots or a clean sandbox **without your real applications or CVs**:
 
-Other scripts: `npm run build`, `npm test` (Vitest; 110 tests — backend + frontend).
+```bash
+npm run seed:demo   # copies fictional data from backend/demo/ → backend/data/
+npm run dev
+```
+
+Fictional resume content uses **John Doe**. Demo sources live in [`backend/demo/`](backend/demo/) (committed). Runtime data in `backend/data/` stays gitignored.
+
+To reset to the minimal first-run seed instead, stop the backend and delete `backend/data/applications.json` (and CV files if needed).
+
+**Persistence:** applications in `backend/data/applications.json`; CV metadata in `backend/data/cv-profiles.json`; files in `backend/data/cvs/`. Override paths with `APPLICATIONS_DATA_FILE`, `CV_METADATA_FILE`, or `CVS_DATA_DIR` (used by tests).
+
+Other scripts: `npm run build`, `npm test` (Vitest), `npm run generate:demo-pdfs` (regenerate demo PDFs).
+
+## API (backend)
+
+- `GET /health` → `{ "status": "ok" }`
+- `GET /applications` → `Application[]`
+- `GET /applications/:id` → `Application` or 404
+- `POST /applications` → create (body: `company`, `role`, optional `status`, dates, `link`, `jobSource`, `description`, `notes`, `contacts`, `cvProfileId`)
+- `PATCH /applications/:id` → partial update
+- `DELETE /applications/:id` → 204 or 404
+- `GET /applications/follow-ups` → `{ "reminders": [...], "asOf": "YYYY-MM-DD" }` (optional `?asOf=YYYY-MM-DD`)
+- `GET /cv-profiles` → `CvProfileSummary[]`
+- `POST /cv-profiles` → multipart create (description + PDF/DOCX file)
+- `PATCH /cv-profiles/:id` → update description
+- `POST /cv-profiles/:id/versions` → upload new version
+- `GET /cv-profiles/:id/versions` → version history with reference counts
+- `GET /cv-profiles/:id/applications` → linked applications
+- `GET /cv-versions/:id/applications` → applications using that version
+- `GET /cv-versions/compare?from=:id&to=:id` → `CvVersionCompareResult` (text diff)
+- `GET /cv-versions/:id/file` → inline file (`?download=1` forces download)
+- `DELETE /cv-versions/:id` → 204 or 409 if referenced
+
+Production deploy would need a reverse proxy from the frontend to the API (Vite proxies `/api` in dev only).
 
 ## Repo layout
 
 | Path | Purpose |
 |------|---------|
-| `shared/` | Shared TypeScript types (`Application`, CRUD inputs, etc.) |
+| `shared/` | Shared TypeScript types |
 | `backend/` | Node + Express API + JSON file persistence |
-| `frontend/` | React + Vite board + stats UI (`@dnd-kit/core`, `react-router-dom`, `recharts`) |
-| `docs/decisions.md` | Append-only squad decision log (Scribe) |
-| `PLAN.md` | Full learning roadmap and squad design |
+| `backend/demo/` | Fictional demo snapshot for screenshots (`npm run seed:demo`) |
+| `frontend/` | React + Vite UI (`@dnd-kit/core`, `react-router-dom`, `recharts`) |
+| `.cursor/rules/` | Squad role charters + workflow (always-loaded overview) |
+| `docs/decisions.md` | Append-only squad decision log |
+| `PLAN.md` | Learning roadmap and squad design |
 | `STATUS.md` | Current step and what's next |
-
-## Feature slices
-
-Planned learning-track slices are complete. Post-track enhancement:
-
-5. ~~**Application details** (modals + extended fields + card badges)~~ — done (2026-06-14)
-6. ~~**CV Tracker** (versioned resumes, application linking, in-app viewer, linked-apps modal)~~ — done (2026-06-15)
-7. ~~**CV version compare** (git-style text diff, cross-profile selection)~~ — done (2026-06-18)
-8. ~~**Job source** (where you found the job — presets + custom values, stats chart)~~ — done (2026-06-18)
-
-Earlier slices:
-
-1. ~~**Reminder / follow-up logic** (backend)~~ — done (Step 3)
-2. ~~**Applications CRUD** (backend)~~ — done (Step 4)
-3. ~~**Status pipeline / kanban view** (frontend)~~ — done (Step 4)
-4. ~~**Stats dashboard** (frontend)~~ — done (Step 5)
 
 ## Squad
 
-7 roles: Lead, Architect, Backend, Frontend, Tester, Reviewer, Scribe.
-Workflow is auto-loaded via `.cursor/rules/squad-overview.mdc`.
+7 roles: Lead, Architect, Backend, Frontend, Tester, Reviewer, Scribe. Workflow auto-loads via [`.cursor/rules/squad-overview.mdc`](.cursor/rules/squad-overview.mdc).
+
+## License
+
+[MIT](LICENSE)

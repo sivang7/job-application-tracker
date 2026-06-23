@@ -1,0 +1,111 @@
+[
+  {
+    "id": "demo-app-1",
+    "company": "Acme Corp",
+    "role": "Software Engineer",
+    "status": "applied",
+    "appliedDate": "2026-05-01",
+    "jobSource": "LinkedIn",
+    "link": "https://example.com/jobs/acme-se",
+    "cvVersionId": "demo-cv-v2",
+    "cvSnapshotDescription": "General software roles — John Doe"
+  },
+  {
+    "id": "demo-app-2",
+    "company": "Beta Inc",
+    "role": "Full Stack Developer",
+    "status": "applied",
+    "appliedDate": "2026-06-10",
+    "jobSource": "Company careers page",
+    "notes": "Follow up after team offsite."
+  },
+  {
+    "id": "demo-app-3",
+    "company": "Gamma LLC",
+    "role": "Senior Engineer",
+    "status": "interviewing",
+    "appliedDate": "2026-05-20",
+    "lastContactDate": "2026-06-15",
+    "jobSource": "Friend / referral",
+    "contacts": [
+      {
+        "name": "Alex Kim",
+        "role": "Engineering manager",
+        "email": "alex.kim@example.com"
+      }
+    ],
+    "cvVersionId": "demo-cv-v2",
+    "cvSnapshotDescription": "General software roles — John Doe"
+  },
+  {
+    "id": "demo-app-4",
+    "company": "Delta Co",
+    "role": "Staff Engineer",
+    "status": "wishlist",
+    "jobSource": "Cold outreach",
+    "description": "Interesting platform team; revisit in Q3."
+  },
+  {
+    "id": "demo-app-5",
+    "company": "Echo Systems",
+    "role": "Platform Engineer",
+    "status": "rejected",
+    "appliedDate": "2026-04-01",
+    "lastContactDate": "2026-04-20",
+    "jobSource": "LinkedIn"
+  },
+  {
+    "id": "demo-app-6",
+    "company": "Foxtrot Labs",
+    "role": "Backend Engineer",
+    "status": "offer",
+    "appliedDate": "2026-05-05",
+    "lastContactDate": "2026-06-18",
+    "jobSource": "Friend / referral",
+    "cvVersionId": "demo-cv-v1",
+    "cvSnapshotDescription": "General software roles — John Doe"
+  },
+  {
+    "id": "demo-app-7",
+    "company": "Hotel Tech",
+    "role": "React Developer",
+    "status": "applied",
+    "appliedDate": "2026-06-01",
+    "jobSource": "Indeed"
+  },
+  {
+    "id": "demo-app-8",
+    "company": "Indigo AI",
+    "role": "ML Platform Engineer",
+    "status": "interviewing",
+    "appliedDate": "2026-04-15",
+    "lastContactDate": "2026-06-01",
+    "jobSource": "Company careers page",
+    "cvVersionId": "demo-cv-v2",
+    "cvSnapshotDescription": "General software roles — John Doe"
+  },
+  {
+    "id": "demo-app-9",
+    "company": "Juliet Startup",
+    "role": "Founding Engineer",
+    "status": "wishlist",
+    "jobSource": "Cold outreach",
+    "notes": "Early stage — check funding news."
+  },
+  {
+    "id": "demo-app-10",
+    "company": "Kilo Finance",
+    "role": "Software Engineer II",
+    "status": "applied",
+    "appliedDate": "2026-05-25",
+    "jobSource": "LinkedIn",
+    "contacts": [
+      {
+        "name": "Jordan Lee",
+        "role": "Recruiter",
+        "email": "jordan.lee@example.com",
+        "phone": "+1-555-0100"
+      }
+    ]
+  }
+]

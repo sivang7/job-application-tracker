@@ -5,26 +5,26 @@ import { describe, expect, it } from 'vitest';
 import { extractCvText, normalizeCvText } from './cvTextExtraction.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const dataDir = join(__dirname, '..', 'data');
-const cvsDir = join(dataDir, 'cvs');
-const metadataPath = join(dataDir, 'cv-profiles.json');
+const demoDir = join(__dirname, '..', 'demo');
+const demoCvsDir = join(demoDir, 'cvs');
+const demoMetadataPath = join(demoDir, 'cv-profiles.json');
 
-interface LocalCvVersion {
+interface DemoCvVersion {
   id: string;
   originalFilename: string;
   mimeType: 'application/pdf' | 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 }
 
-function loadLocalPdfVersions(): LocalCvVersion[] {
-  if (!existsSync(metadataPath) || !existsSync(cvsDir)) return [];
+function loadDemoPdfVersions(): DemoCvVersion[] {
+  if (!existsSync(demoMetadataPath) || !existsSync(demoCvsDir)) return [];
 
-  const metadata = JSON.parse(readFileSync(metadataPath, 'utf8')) as {
-    versions: LocalCvVersion[];
+  const metadata = JSON.parse(readFileSync(demoMetadataPath, 'utf8')) as {
+    versions: DemoCvVersion[];
   };
 
   return metadata.versions.filter((v) => {
     if (v.mimeType !== 'application/pdf') return false;
-    return existsSync(join(cvsDir, `${v.id}.pdf`));
+    return existsSync(join(demoCvsDir, `${v.id}.pdf`));
   });
 }
 
@@ -42,37 +42,33 @@ describe('normalizeCvText', () => {
   });
 });
 
-describe('extractCvText — local CV files', () => {
-  const localPdfs = loadLocalPdfVersions();
+describe('extractCvText — demo CV fixtures', () => {
+  const demoPdfs = loadDemoPdfVersions();
 
-  it.skipIf(localPdfs.length === 0)(
-    'extracts non-empty text from each local PDF on disk',
-    async () => {
-      for (const version of localPdfs) {
-        const buffer = readFileSync(join(cvsDir, `${version.id}.pdf`));
-        const text = await extractCvText(buffer, version.mimeType);
-        expect(text.length, version.originalFilename).toBeGreaterThan(50);
-      }
-    },
-  );
+  it('extracts non-empty text from each demo PDF', async () => {
+    expect(demoPdfs.length).toBeGreaterThanOrEqual(2);
+    for (const version of demoPdfs) {
+      const buffer = readFileSync(join(demoCvsDir, `${version.id}.pdf`));
+      const text = await extractCvText(buffer, version.mimeType);
+      expect(text.length, version.originalFilename).toBeGreaterThan(20);
+    }
+  });
 
-  it.skipIf(localPdfs.length < 2)(
-    'extracts recognizable content from Sivan CV PDFs for compare',
-    async () => {
-      const [first, second] = localPdfs;
-      const textA = await extractCvText(
-        readFileSync(join(cvsDir, `${first.id}.pdf`)),
-        first.mimeType,
-      );
-      const textB = await extractCvText(
-        readFileSync(join(cvsDir, `${second.id}.pdf`)),
-        second.mimeType,
-      );
+  it('extracts John Doe content from demo PDFs for compare', async () => {
+    expect(demoPdfs.length).toBeGreaterThanOrEqual(2);
+    const [first, second] = demoPdfs;
+    const textA = await extractCvText(
+      readFileSync(join(demoCvsDir, `${first.id}.pdf`)),
+      first.mimeType,
+    );
+    const textB = await extractCvText(
+      readFileSync(join(demoCvsDir, `${second.id}.pdf`)),
+      second.mimeType,
+    );
 
-      expect(textA).toMatch(/Sivan/i);
-      expect(textB).toMatch(/Sivan/i);
-      expect(textA).toMatch(/Zohar/i);
-      expect(textB).toMatch(/Zohar/i);
-    },
-  );
+    expect(textA).toMatch(/John Doe/i);
+    expect(textB).toMatch(/John Doe/i);
+    expect(textB).toMatch(/Senior Software Engineer/i);
+    expect(textB).toMatch(/PostgreSQL/i);
+  });
 });

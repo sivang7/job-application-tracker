@@ -6,29 +6,29 @@ import { compareCvVersions } from './cvCompare.js';
 import { reloadCvStoreFromDisk } from './cvStore.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const localMetadataPath = join(__dirname, '..', 'data', 'cv-profiles.json');
-const localCvsDir = join(__dirname, '..', 'data', 'cvs');
+const demoMetadataPath = join(__dirname, '..', 'demo', 'cv-profiles.json');
+const demoCvsDir = join(__dirname, '..', 'demo', 'cvs');
 
-function hasLocalCvFixtures(): boolean {
-  if (!existsSync(localMetadataPath) || !existsSync(localCvsDir)) return false;
-  const metadata = JSON.parse(readFileSync(localMetadataPath, 'utf8')) as {
+function hasDemoCvFixtures(): boolean {
+  if (!existsSync(demoMetadataPath) || !existsSync(demoCvsDir)) return false;
+  const metadata = JSON.parse(readFileSync(demoMetadataPath, 'utf8')) as {
     versions: Array<{ id: string; mimeType: string }>;
   };
   return metadata.versions.some(
     (v) =>
-      v.mimeType === 'application/pdf' && existsSync(join(localCvsDir, `${v.id}.pdf`)),
+      v.mimeType === 'application/pdf' && existsSync(join(demoCvsDir, `${v.id}.pdf`)),
   );
 }
 
-describe('compareCvVersions integration — local CV files', () => {
+describe('compareCvVersions integration — demo CV fixtures', () => {
   let previousMeta: string | undefined;
   let previousCvsDir: string | undefined;
 
   beforeEach(() => {
     previousMeta = process.env.CV_METADATA_FILE;
     previousCvsDir = process.env.CVS_DATA_DIR;
-    process.env.CV_METADATA_FILE = localMetadataPath;
-    process.env.CVS_DATA_DIR = localCvsDir;
+    process.env.CV_METADATA_FILE = demoMetadataPath;
+    process.env.CVS_DATA_DIR = demoCvsDir;
     reloadCvStoreFromDisk();
   });
 
@@ -40,14 +40,14 @@ describe('compareCvVersions integration — local CV files', () => {
     reloadCvStoreFromDisk();
   });
 
-  it.skipIf(!hasLocalCvFixtures())(
-    'compares oldest and newest real Sivan CV PDF versions end-to-end',
+  it.skipIf(!hasDemoCvFixtures())(
+    'compares John Doe demo CV versions end-to-end',
     async () => {
-      const metadata = JSON.parse(readFileSync(localMetadataPath, 'utf8')) as {
+      const metadata = JSON.parse(readFileSync(demoMetadataPath, 'utf8')) as {
         versions: Array<{ id: string; uploadedAt: string }>;
       };
       const pdfVersions = metadata.versions
-        .filter((v) => existsSync(join(localCvsDir, `${v.id}.pdf`)))
+        .filter((v) => existsSync(join(demoCvsDir, `${v.id}.pdf`)))
         .sort((a, b) => a.uploadedAt.localeCompare(b.uploadedAt));
 
       expect(pdfVersions.length).toBeGreaterThanOrEqual(2);
@@ -59,10 +59,10 @@ describe('compareCvVersions integration — local CV files', () => {
       expect(result.ok).toBe(true);
       if (!result.ok) return;
 
-      expect(result.data.fromText.length).toBeGreaterThan(50);
-      expect(result.data.toText.length).toBeGreaterThan(50);
-      expect(result.data.fromText).toMatch(/Sivan/i);
-      expect(result.data.toText).toMatch(/Sivan/i);
+      expect(result.data.fromText.length).toBeGreaterThan(20);
+      expect(result.data.toText.length).toBeGreaterThan(20);
+      expect(result.data.fromText).toMatch(/John Doe/i);
+      expect(result.data.toText).toMatch(/John Doe/i);
       expect(result.data.from.version.id).toBe(older);
       expect(result.data.to.version.id).toBe(newer);
     },

@@ -1,0 +1,26 @@
+{
+  "profiles": [
+    {
+      "id": "demo-profile-john",
+      "description": "General software roles — John Doe",
+      "createdAt": "2026-04-01T10:00:00.000Z",
+      "updatedAt": "2026-05-15T14:30:00.000Z"
+    }
+  ],
+  "versions": [
+    {
+      "id": "demo-cv-v1",
+      "profileId": "demo-profile-john",
+      "originalFilename": "john-doe-resume-v1.pdf",
+      "mimeType": "application/pdf",
+      "uploadedAt": "2026-04-01T10:00:00.000Z"
+    },
+    {
+      "id": "demo-cv-v2",
+      "profileId": "demo-profile-john",
+      "originalFilename": "john-doe-resume-v2.pdf",
+      "mimeType": "application/pdf",
+      "uploadedAt": "2026-05-15T14:30:00.000Z"
+    }
+  ]
+}

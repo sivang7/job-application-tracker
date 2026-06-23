@@ -6,7 +6,6 @@ import {
   Routes,
   useLocation,
 } from 'react-router-dom';
-import { checkHealth } from './api';
 import { ApplicationForm } from './components/ApplicationForm';
 import { KanbanBoard } from './components/KanbanBoard';
 import { RouteErrorBoundary } from './components/RouteErrorBoundary';
@@ -16,32 +15,15 @@ import { CvViewerPage } from './components/CvViewerPage';
 import { CvComparePage } from './components/CvComparePage';
 import './App.css';
 
-type HealthState = 'checking' | 'ok' | 'unreachable';
-
 export function App() {
-  const [health, setHealth] = useState<HealthState>('checking');
   const [error, setError] = useState('');
   const [refreshKey, setRefreshKey] = useState(0);
   const location = useLocation();
 
   useEffect(() => {
-    let cancelled = false;
-    checkHealth().then((ok) => {
-      if (!cancelled) {
-        setHealth(ok ? 'ok' : 'unreachable');
-      }
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
     setError('');
   }, [location.pathname]);
 
-  const healthClass =
-    health === 'ok' ? 'health-ok' : health === 'unreachable' ? 'health-bad' : 'health-checking';
   const isStatsRoute = location.pathname === '/stats';
   const isCvsRoute = location.pathname.startsWith('/cvs');
   const isCvViewerRoute = location.pathname.startsWith('/cvs/view/');
@@ -97,10 +79,6 @@ export function App() {
               CV Tracker
             </NavLink>
           </nav>
-          <span className={`health-badge ${healthClass}`}>
-            <span className="health-dot" aria-hidden />
-            Backend {health === 'checking' ? '…' : health}
-          </span>
         </div>
       </header>
 

@@ -5,6 +5,10 @@ built-in Cursor features (role charters as rules + subagent delegation). The
 squad itself builds this app - a **Job Application Tracker** - starting with its
 own thin skeleton, so you can watch the agents collaborate from minute one.
 
+## Completed
+
+The planned learning track and post-track enhancements are **done**. See [`STATUS.md`](STATUS.md) for the full checklist (CRUD, kanban, follow-ups, stats, CV tracker, job source, CV compare). The app uses JSON file persistence on disk.
+
 ## Approach
 The squad builds everything (even its own skeleton). The only manual setup is the
 empty container and the team definition (the role charters in `.cursor/rules/`).
@@ -42,12 +46,13 @@ flowchart TD
 - **Multitask Mode / parallel agents** - Backend + Frontend run concurrently.
 
 ## The project: Job Application Tracker
-- `frontend/` React + TS (Vite); `backend/` Node + TS API (in-memory first); `shared/` types.
-- Feature slices:
+- `frontend/` React + TS (Vite); `backend/` Node + TS API + JSON persistence; `shared/` types.
+- Feature slices (all complete):
   - Applications CRUD (backend)
   - Status pipeline / kanban view (frontend)
-  - Reminder / follow-up logic (backend, very testable -> first feature slice)
+  - Reminder / follow-up logic (backend)
   - Stats dashboard (frontend)
+  - CV tracker, job source, CV version compare
 
 ## Steps
 0. **Container** - create the folder + `git init`; document the design here in `PLAN.md`.
