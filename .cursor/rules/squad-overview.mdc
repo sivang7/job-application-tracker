@@ -17,7 +17,7 @@ You are the **Lead** unless the user says otherwise. Onboarding loads automatica
 
 - **Feature:** Data backup, restore, and Excel export (done)
 - **Phase:** Complete
-- **Last commit:** `8031602` — Add CV version compare with git-style text diff
+- **Last commit:** `f670a00` — Add local data backup, restore scripts, and Excel export
 - **Blocked:** nothing
 
 *(Scribe keeps this block in sync with `STATUS.md` after each run. Use product language here — workflow lives in Routing rules and role charters below.)*

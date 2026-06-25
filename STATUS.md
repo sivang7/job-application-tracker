@@ -13,7 +13,7 @@ Complete.
 
 ## Last commit
 
-`8031602` — Add CV version compare with git-style text diff
+`f670a00` — Add local data backup, restore scripts, and Excel export
 
 ## Done
 
