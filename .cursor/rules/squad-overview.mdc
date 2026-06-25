@@ -15,7 +15,7 @@ You are the **Lead** unless the user says otherwise. Onboarding loads automatica
 
 ## Current status
 
-- **Feature:** CV version compare — git-style text diff between any two CV versions (done)
+- **Feature:** Data backup, restore, and Excel export (done)
 - **Phase:** Complete
 - **Last commit:** `8031602` — Add CV version compare with git-style text diff
 - **Blocked:** nothing

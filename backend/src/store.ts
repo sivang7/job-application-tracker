@@ -1,7 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import type { Application, CreateApplicationInput, UpdateApplicationInput } from '@jat/shared';
+import { scheduleAutoBackup } from './autoBackup.js';
 import { loadApplications, saveApplications } from './persistence.js';
 import { applyUpdate } from './applicationsValidation.js';
+
+function persistApplications(apps: Application[]): void {
+  saveApplications(apps);
+  scheduleAutoBackup();
+}
 
 export type CvLinkPatch =
   | { clear: true }
@@ -36,8 +42,9 @@ export function createApplication(
       cvVersionId: cvLink.cvVersionId,
       cvSnapshotDescription: cvLink.cvSnapshotDescription,
     }),
-  };  applications = [...applications, app];
-  saveApplications(applications);
+  };
+  applications = [...applications, app];
+  persistApplications(applications);
   return app;
 }
 
@@ -61,8 +68,9 @@ export function updateApplication(
         cvSnapshotDescription: cvLink.cvSnapshotDescription,
       };
     }
-  }  applications = [...applications.slice(0, index), updated, ...applications.slice(index + 1)];
-  saveApplications(applications);
+  }
+  applications = [...applications.slice(0, index), updated, ...applications.slice(index + 1)];
+  persistApplications(applications);
   return updated;
 }
 
@@ -71,7 +79,7 @@ export function deleteApplication(id: string): boolean {
   if (index === -1) return false;
 
   applications = [...applications.slice(0, index), ...applications.slice(index + 1)];
-  saveApplications(applications);
+  persistApplications(applications);
   return true;
 }
 

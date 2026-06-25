@@ -226,3 +226,19 @@ Append-only record of squad and user decisions. The Scribe maintains this file.
 **Why backend extraction:** Keeps frontend bundle smaller; single place for PDF/DOCX parsing; reuse existing file storage unchanged.
 
 **Outcome:** 107 Vitest tests; Reviewer Gate 2 APPROVED; `npm run build` passes.
+
+---
+
+## 2026-06-23 — Data backup, restore, and Excel export
+
+**Decision:** Local-first data protection without UI or HTTP APIs. Rolling folder snapshot at `backend/data/backups/latest/` (replaces previous on each snapshot). Auto-backup: 60s debounced after any application or CV write while the backend runs. Manual npm scripts for backup, list, restore, and Excel export. Safety snapshots (`pre-seed-demo-*`, `pre-restore-*`) are not auto-deleted.
+
+**Backup format:** Folder mirror of `applications.json`, `cv-profiles.json`, and `cvs/` — not zip, not JSON-only (CV binaries required for full restore).
+
+**Excel:** Applications only, one row per app; contacts summarized in one cell. `npm run export:excel` writes to `backend/data/exports/`.
+
+**seed:demo guard:** Aborts when real user data detected unless `--force`; always saves `pre-seed-demo-*` snapshot before overwrite.
+
+**Why scripts not UI:** User prefers agent-assisted backup/restore in chat; keeps scope minimal.
+
+**Outcome:** 119 Vitest tests; `npm run build` passes.

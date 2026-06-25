@@ -17,7 +17,11 @@
     "build": "npm -w shared run build && npm -w backend run build && npm -w frontend run build",
     "test": "vitest run",
     "seed:demo": "node scripts/seed-demo.mjs",
-    "generate:demo-pdfs": "node scripts/generate-demo-pdfs.mjs"
+    "generate:demo-pdfs": "node scripts/generate-demo-pdfs.mjs",
+    "backup": "npm -w backend run backup",
+    "backup:list": "npm -w backend run backup:list",
+    "backup:restore": "npm -w backend run backup:restore",
+    "export:excel": "npm -w backend run export:excel"
   },
   "devDependencies": {
     "concurrently": "^9",

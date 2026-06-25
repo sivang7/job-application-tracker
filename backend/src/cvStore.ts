@@ -5,6 +5,7 @@ import type {
   CvProfileSummary,
   CvVersion,
 } from '@jat/shared';
+import { scheduleAutoBackup } from './autoBackup.js';
 import {
   deleteCvFile,
   loadCvMetadata,
@@ -12,6 +13,16 @@ import {
   saveCvMetadata,
   type CvMetadata,
 } from './cvPersistence.js';
+
+function persistCvMetadata(next: CvMetadata): void {
+  saveCvMetadata(next);
+  scheduleAutoBackup();
+}
+
+function persistCvFile(versionId: string, mimeType: Parameters<typeof saveCvFile>[1], buffer: Buffer): void {
+  saveCvFile(versionId, mimeType, buffer);
+  scheduleAutoBackup();
+}
 import { validateCvDescription, validateCvFile } from './cvValidation.js';
 
 let metadata: CvMetadata = loadCvMetadata();
@@ -109,12 +120,12 @@ export function createCvProfile(
     uploadedAt: now,
   };
 
-  saveCvFile(versionId, fileResult.data.mimeType, fileResult.data.buffer);
+  persistCvFile(versionId, fileResult.data.mimeType, fileResult.data.buffer);
   metadata = {
     profiles: [...metadata.profiles, profile],
     versions: [...metadata.versions, version],
   };
-  saveCvMetadata(metadata);
+  persistCvMetadata(metadata);
 
   const summary = toProfileSummary(profile);
   if (!summary) return { ok: false, error: 'Failed to create profile', status: 500 };
@@ -144,7 +155,7 @@ export function updateCvProfileDescription(
     profiles: metadata.profiles.map((p) => (p.id === profileId ? updated : p)),
     versions: metadata.versions,
   };
-  saveCvMetadata(metadata);
+  persistCvMetadata(metadata);
 
   const summary = toProfileSummary(updated);
   if (!summary) return { ok: false, error: 'Profile has no versions', status: 409 };
@@ -176,13 +187,13 @@ export function uploadCvVersion(
     uploadedAt: now,
   };
 
-  saveCvFile(versionId, fileResult.data.mimeType, fileResult.data.buffer);
+  persistCvFile(versionId, fileResult.data.mimeType, fileResult.data.buffer);
   const updatedProfile: CvProfile = { ...profile, updatedAt: now };
   metadata = {
     profiles: metadata.profiles.map((p) => (p.id === profileId ? updatedProfile : p)),
     versions: [...metadata.versions, version],
   };
-  saveCvMetadata(metadata);
+  persistCvMetadata(metadata);
 
   const summary = toProfileSummary(updatedProfile);
   if (!summary) return { ok: false, error: 'Failed to upload version', status: 500 };
@@ -209,7 +220,7 @@ export function deleteCvVersion(versionId: string, referenceCount: number): Dele
     profiles: metadata.profiles,
     versions: metadata.versions.filter((v) => v.id !== versionId),
   };
-  saveCvMetadata(metadata);
+  persistCvMetadata(metadata);
   return { ok: true };
 }
 

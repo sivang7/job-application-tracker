@@ -41,14 +41,31 @@ For README screenshots or a clean sandbox **without your real applications or CV
 
 ```bash
 npm run seed:demo   # copies fictional data from backend/demo/ → backend/data/
+npm run seed:demo -- --force   # required if real user data is detected
 npm run dev
 ```
 
-Fictional resume content uses **John Doe**. Demo sources live in [`backend/demo/`](backend/demo/) (committed). Runtime data in `backend/data/` stays gitignored.
+Fictional resume content uses **John Doe**. Demo sources live in [`backend/demo/`](backend/demo/) (committed). Runtime data in `backend/data/` stays gitignored. If real data is present, `seed:demo` aborts unless you pass `--force`; it saves a `pre-seed-demo-*` safety copy first.
 
 To reset to the minimal first-run seed instead, stop the backend and delete `backend/data/applications.json` (and CV files if needed).
 
 **Persistence:** applications in `backend/data/applications.json`; CV metadata in `backend/data/cv-profiles.json`; files in `backend/data/cvs/`. Override paths with `APPLICATIONS_DATA_FILE`, `CV_METADATA_FILE`, or `CVS_DATA_DIR` (used by tests).
+
+### Data backup and export
+
+While the backend is running, changes to applications or CVs trigger an **auto snapshot** (60s after the last write) into `backend/data/backups/latest/` — one rolling backup that replaces the previous copy.
+
+| Command | Purpose |
+|---------|---------|
+| `npm run backup` | Snapshot now into `backups/latest/` |
+| `npm run backup:list` | List `latest/` and any `pre-*` safety folders |
+| `npm run backup:restore` | Restore from `latest/` (**stop the backend first**) |
+| `npm run backup:restore -- pre-seed-demo-…` | Restore from a named safety folder |
+| `npm run export:excel` | Write `backend/data/exports/applications-{date}.xlsx` |
+
+Custom Excel path: `npm run export:excel -- --output path/to/file.xlsx`
+
+You can also ask the agent in Cursor to run backup, restore, or export for you. Safety snapshots (`pre-seed-demo-*`, `pre-restore-*`) are kept until you delete them manually.
 
 Other scripts: `npm run build`, `npm test` (Vitest), `npm run generate:demo-pdfs` (regenerate demo PDFs).
 

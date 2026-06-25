@@ -7,3 +7,5 @@ coverage
 backend/data/applications.json
 backend/data/cv-profiles.json
 backend/data/cvs/
+backend/data/backups/
+backend/data/exports/
